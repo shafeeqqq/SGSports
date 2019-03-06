@@ -1,14 +1,14 @@
 package com.example.shaf.sgsports;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 
 /**
@@ -31,8 +31,8 @@ public class EventSearchFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private TextView textView;
-    private Button buttonView;
+    private RecyclerView recyclerView;
+    private EventListAdapter eventListAdapter;
 
     public EventSearchFragment() {
         // Required empty public constructor
@@ -72,17 +72,24 @@ public class EventSearchFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_event, container, false);
 
-        textView = view.findViewById(R.id.event_text_view);
-        textView.setText("0");
-        buttonView = view.findViewById(R.id.event_btn_view);
+        eventListAdapter = new EventListAdapter(view.getContext());
 
-        buttonView.setOnClickListener(new View.OnClickListener() {
+        recyclerView = view.findViewById(R.id.eventsearch_recycler_view);
+        recyclerView.setAdapter(eventListAdapter);
+
+        recyclerView.addOnItemTouchListener(new RecyclerItemCustomListener(view.getContext(),
+                recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                int val = Integer.parseInt(textView.getText().toString()) + 1;
-                textView.setText(String.valueOf(val));
+            public void onItemClick(View view, int position) {
+                // TODO: launch event details activity
+                Intent intent = new Intent(view.getContext(), EventDetailsActivity.class);
+                startActivity(intent);
             }
-        });
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+            }
+        }));
 
         return view;
 

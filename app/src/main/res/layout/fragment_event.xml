@@ -5,18 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/event_text_view"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/eventsearch_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/hello_blank_fragment" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="32dp"
+        android:paddingBottom="16dp"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
-    <Button
-        android:id="@+id/event_btn_view"
-        android:layout_marginLeft="100dp"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="+1"/>
 
 </android.support.constraint.ConstraintLayout>

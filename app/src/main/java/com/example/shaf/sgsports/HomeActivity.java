@@ -9,7 +9,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,7 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class HomeActivity extends AppCompatActivity implements
-        EventSearchFragment.OnFragmentInteractionListener, ConnectFragment.OnFragmentInteractionListener{
+        EventSearchFragment.OnFragmentInteractionListener, ConnectFragment.OnFragmentInteractionListener,
+        FacilitiesFragment.OnFragmentInteractionListener {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -30,6 +30,7 @@ public class HomeActivity extends AppCompatActivity implements
     final Fragment eventFragment = new EventSearchFragment();
     final Fragment connectFragment = new ConnectFragment();
     final Fragment scheduleFragment = new ScheduleFragment();
+    final Fragment facilitiesFragment = new FacilitiesFragment();
 
     final FragmentManager fm = getSupportFragmentManager();
     Fragment active_fragment = eventFragment;
@@ -42,10 +43,15 @@ public class HomeActivity extends AppCompatActivity implements
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_events:
-                    fm.beginTransaction().hide(active_fragment).show(eventFragment).commit();
+                    fm.beginTransaction().hide(active_fragment)
+                            .show(eventFragment)
+                            .commit();
+                    active_fragment = eventFragment;
                     return true;
 
                 case R.id.navigation_facilities:
+                    fm.beginTransaction().hide(active_fragment).show(facilitiesFragment).commit();
+                    active_fragment = facilitiesFragment;
                     return true;
 
                 case R.id.navigation_create_event:
@@ -54,7 +60,7 @@ public class HomeActivity extends AppCompatActivity implements
                     return true;
 
                 case R.id.navigation_schedule:
-                    fm.beginTransaction().hide(active_fragment).show(connectFragment).commit();
+                    fm.beginTransaction().hide(active_fragment).show(scheduleFragment).commit();
                     active_fragment = scheduleFragment;
                     return true;
 
@@ -68,15 +74,7 @@ public class HomeActivity extends AppCompatActivity implements
     };
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CREATE_EVENT_CODE) {
-            mBottomNavigationView.setSelectedItemId(R.id.navigation_schedule);
-
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,13 +84,24 @@ public class HomeActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        if (mFirebaseUser == null) {
-            // Not signed in, launch the Sign In activity
-            startActivityForResult(new Intent(this, LoginActivity.class), 900);
-            mFirebaseUser = mFirebaseAuth.getCurrentUser();
-            if (mFirebaseUser == null)
-                Log.e("Firebase User", "user not found");
-        }
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() == null) {
+                    // Not signed in, launch the Sign In activity
+                    startActivityForResult(new Intent(HomeActivity.this, LoginActivity.class), 900);
+                    mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                }
+            }
+        };
+
+//        if (mFirebaseUser == null) {
+//            // Not signed in, launch the Sign In activity
+//            startActivityForResult(new Intent(this, LoginActivity.class), 900);
+//            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+//            if (mFirebaseUser == null)
+//                Log.e("Firebase User", "user not found");
+//        }
 
         mBottomNavigationView = findViewById(R.id.navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -101,8 +110,21 @@ public class HomeActivity extends AppCompatActivity implements
         fm.beginTransaction().add(R.id.home_container, eventFragment).commit();
         fm.beginTransaction().add(R.id.home_container, connectFragment).hide(connectFragment).commit();
         fm.beginTransaction().add(R.id.home_container, scheduleFragment).hide(scheduleFragment).commit();
+        fm.beginTransaction().add(R.id.home_container, facilitiesFragment).hide(facilitiesFragment).commit();
 
 
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CREATE_EVENT_CODE) {
+            mBottomNavigationView.setSelectedItemId(R.id.navigation_schedule);
+
+        }
     }
 
     /**
