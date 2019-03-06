@@ -71,19 +71,6 @@ public class ConnectFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
-
-        textView = view.findViewById(R.id.connect_text_view);
-        textView.setText("0");
-        buttonView = view.findViewById(R.id.connect_btn_view);
-
-        buttonView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int val = Integer.parseInt(textView.getText().toString());
-                textView.setText(String.valueOf(val));
-            }
-        });
-
         return view;
 
     }

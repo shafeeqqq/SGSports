@@ -1,6 +1,7 @@
 package com.example.shaf.sgsports;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -19,13 +21,22 @@ public class HomeActivity extends AppCompatActivity implements
         EventSearchFragment.OnFragmentInteractionListener, ConnectFragment.OnFragmentInteractionListener,
         FacilitiesFragment.OnFragmentInteractionListener {
 
+    private static final String TAG = "HomeActivity" ;
+
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
+    public static final String LOGIN_PREFS = "LoginInfo";
+    public static final String LOGGED_IN_FLAG = "isLoggedIn";
+    SharedPreferences sharedPref;
+
+    Boolean isLoggedIn;
+
     BottomNavigationView mBottomNavigationView;
 
     private final int CREATE_EVENT_CODE = 900;
+    private final int LOGIN_INTENT_CODE = 904;
 
     final Fragment eventFragment = new EventSearchFragment();
     final Fragment connectFragment = new ConnectFragment();
@@ -81,27 +92,30 @@ public class HomeActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
+        isLoggedIn = sharedPref.getBoolean(LOGGED_IN_FLAG, false);
+
+        String log_msg = "ONCREATE: isLoggedIn = " + String.valueOf(isLoggedIn);
+        Log.i(TAG, log_msg);
+
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null) {
-                    // Not signed in, launch the Sign In activity
-                    startActivityForResult(new Intent(HomeActivity.this, LoginActivity.class), 900);
-                    mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                }
-            }
-        };
+//        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if (firebaseAuth.getCurrentUser() == null) {
+//                    // Not signed in, launch the Sign In activity
+//                    startActivityForResult(new Intent(HomeActivity.this, LoginActivity.class), 900);
+//                    mFirebaseUser = mFirebaseAuth.getCurrentUser();
+//                }
+//            }
+//        };
 
-//        if (mFirebaseUser == null) {
-//            // Not signed in, launch the Sign In activity
-//            startActivityForResult(new Intent(this, LoginActivity.class), 900);
-//            mFirebaseUser = mFirebaseAuth.getCurrentUser();
-//            if (mFirebaseUser == null)
-//                Log.e("Firebase User", "user not found");
-//        }
+        if (!isLoggedIn) {
+            // Not signed in, launch the Sign In activity
+            startActivityForResult(new Intent(this, LoginActivity.class), LOGIN_INTENT_CODE);
+        }
 
         mBottomNavigationView = findViewById(R.id.navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -112,8 +126,6 @@ public class HomeActivity extends AppCompatActivity implements
         fm.beginTransaction().add(R.id.home_container, scheduleFragment).hide(scheduleFragment).commit();
         fm.beginTransaction().add(R.id.home_container, facilitiesFragment).hide(facilitiesFragment).commit();
 
-
-
     }
 
 
@@ -123,6 +135,13 @@ public class HomeActivity extends AppCompatActivity implements
 
         if (requestCode == CREATE_EVENT_CODE) {
             mBottomNavigationView.setSelectedItemId(R.id.navigation_schedule);
+        }
+
+        else if (requestCode == LOGIN_INTENT_CODE) {
+            isLoggedIn = sharedPref.getBoolean(LOGGED_IN_FLAG, false);
+
+            String log_msg = "ONRESULT: isLoggedIn = " + String.valueOf(isLoggedIn);
+            Log.i(TAG, log_msg);
 
         }
     }
