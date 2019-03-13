@@ -53,6 +53,10 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         return 0;
     }
 
+    public String getItem(int position) {
+        return mCategories[position];
+    }
+
     public class CategoryListViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textView;

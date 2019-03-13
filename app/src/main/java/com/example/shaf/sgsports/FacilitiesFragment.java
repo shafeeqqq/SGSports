@@ -6,9 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 
 /**
@@ -89,6 +93,32 @@ public class FacilitiesFragment extends Fragment {
             public void onLongItemClick(View view, int position) {
             }
         }));
+
+
+//        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+//// Create an ArrayAdapter using the string array and a default spinner layout
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
+//                R.array.onto, android.R.layout.simple_spinner_item);
+//
+//// Specify the layout to use when the list of choices appears
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//// Apply the adapter to the spinner
+//        spinner.setAdapter(adapter);
+//
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String item = (String) parent.getSelectedItem();
+//                Log.e("TAG", item);
+//                if (item.equals("One"))
+//                    facilityListAdapter.setList(getResources().getStringArray(R.array.sports_categories));
+//                else
+//                    facilityListAdapter.setList(getResources().getStringArray(R.array.planets_array));
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//            }
+//        });
 
         return view;
     }

@@ -1,5 +1,7 @@
 package com.example.shaf.sgsports.Model;
 
+import com.example.shaf.sgsports.SkillLevel;
+
 import java.util.Date;
 
 public class Event {
@@ -13,6 +15,7 @@ public class Event {
     private Sport sportsCategory;
     private int maxParticipants;
     private String description;
+    private SkillLevel skillLevel;
 
 
     public String getName() {
@@ -26,7 +29,7 @@ public class Event {
     public Date getDateOfEvent() {
         return dateOfEvent;
     }
-
+ 
     public Sport getSportsCategory() {
         return sportsCategory;
     }
@@ -39,5 +42,7 @@ public class Event {
         return description;
     }
 
-
+    public SkillLevel getSkillLevel() {
+        return skillLevel;
+    }
 }
