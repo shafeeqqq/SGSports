@@ -1,4 +1,6 @@
 package com.example.shaf.sgsports.Model;
 
-class Sport {
+public class Sport {
+
+    public Sport() {}
 }

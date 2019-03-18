@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.shaf.sgsports.Model.Event;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventListViewHolder> {
@@ -36,45 +37,69 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         View itemView = LayoutInflater.from(mContext)
                 .inflate(R.layout.list_item_event, parent, false);
 
-
         return new EventListAdapter.EventListViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EventListAdapter.EventListViewHolder holder, int position) {
-//        if (mEvents != null) {
-//            Event current = mEvents.get(position);
-//
-//            // TODO: event object binding
-//
-//        }
-//
-//        else {
-//            Toast.makeText(mContext, "Error displaying data", Toast.LENGTH_LONG).show();
-//        }
-        if (mCategories != null) {
-            String current = mCategories[position];
-            holder.textView.setText(current);
+        if (mEvents != null) {
+            Event current = mEvents.get(position);
+
+            holder.nameTextView.setText(current.getName());
+            holder.catTextView.setText("| " + current.getSportsCategory());
+
+            SimpleDateFormat getDate = new SimpleDateFormat("dd MMM, yyyy");
+            holder.dateTextView.setText(getDate.format(current.getDateOfEvent()));
+
+            String timeText = current.getFromTime() + " - " + current.getToTime();
+            holder.timeTextView.setText(timeText);
+
+            String numText = "Looking for " + current.getMaxParticipants() + " more players";
+            holder.numTextView.setText(numText);
+
+
+        } else {
+            Toast.makeText(mContext, "Error displaying data", Toast.LENGTH_LONG).show();
         }
+//        if (mCategories != null) {
+//            String current = mCategories[position];
+//            holder.textView.setText(current);
+//        }
     }
 
 
     @Override
     public int getItemCount() {
         // TODO: change this to event later
-        if (mCategories != null)
-            return mCategories.length;
+        if (mEvents != null)
+            return mEvents.size();
         return 0;
     }
 
+
+    public void setEvents(List<Event> events){
+        mEvents = events;
+        notifyDataSetChanged();
+
+    }
+
+
     public class EventListViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textView;
+        private TextView nameTextView;
+        private TextView catTextView;
+        private TextView dateTextView;
+        private TextView timeTextView;
+        private TextView numTextView;
 
         public EventListViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.event_item_category_text);
 
+            nameTextView = itemView.findViewById(R.id.event_item_name_text);
+            catTextView = itemView.findViewById(R.id.event_item_category_text);
+            dateTextView = itemView.findViewById(R.id.event_item_date_text);
+            timeTextView = itemView.findViewById(R.id.event_item_time_text);
+            numTextView = itemView.findViewById(R.id.event_item_num_text);
         }
     }
 }

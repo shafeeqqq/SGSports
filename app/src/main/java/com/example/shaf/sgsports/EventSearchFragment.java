@@ -10,20 +10,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.shaf.sgsports.Model.Event;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link EventSearchFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link EventSearchFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class EventSearchFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private static ArrayList<Event> eventArrayList = new ArrayList<Event>();
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -36,24 +46,6 @@ public class EventSearchFragment extends Fragment {
 
     public EventSearchFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EventSearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EventSearchFragment newInstance(String param1, String param2) {
-        EventSearchFragment fragment = new EventSearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -74,6 +66,28 @@ public class EventSearchFragment extends Fragment {
 
         eventListAdapter = new EventListAdapter(view.getContext());
 
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("events");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                eventArrayList.clear();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Event event = ds.getValue(Event.class);
+                    eventArrayList.add(event);
+                }
+                eventListAdapter.setEvents(eventArrayList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+            }
+        });
+
         recyclerView = view.findViewById(R.id.eventsearch_recycler_view);
         recyclerView.setAdapter(eventListAdapter);
 
@@ -81,7 +95,6 @@ public class EventSearchFragment extends Fragment {
                 recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                // TODO: launch event details activity
                 Intent intent = new Intent(view.getContext(), EventDetailsActivity.class);
                 startActivity(intent);
             }

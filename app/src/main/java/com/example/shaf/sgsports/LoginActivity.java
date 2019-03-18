@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     public static final String LOGIN_PREFS = "LoginInfo";
     public static final String LOGGED_IN_FLAG = "isLoggedIn";
+    private static final String USER_ACCT_ID = "emailAddress" ;
     SharedPreferences sharedPref;
 
 
@@ -97,8 +98,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             GoogleSignInAccount account = result.getSignInAccount();
 
             Toast.makeText(this, "Welcome " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
+            String accountId = account.getId();
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean(LOGGED_IN_FLAG, true);
+            editor.putString(USER_ACCT_ID, accountId);
             editor.apply();
 
             Log.e(TAG, account.getIdToken());
