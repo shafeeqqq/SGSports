@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,12 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shaf.sgsports.Model.Event;
-import com.example.shaf.sgsports.Model.User;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.example.shaf.sgsports.Model.SkillLevel;
+import com.example.shaf.sgsports.Model.UserInEvents;
+import com.example.shaf.sgsports.Utils.DatePickerFragment;
+import com.example.shaf.sgsports.Utils.TimePickerFragment;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -171,6 +170,13 @@ public class CreateEventDetailsFragment extends Fragment {
 
         myRef.child(id).setValue(event);
 
+        saveUserInEvent(userId, event);
+
+    }
+
+    private void saveUserInEvent(String userId, Event event) {
+        DatabaseReference myRef = database.getReference("userInEvents/" + userId);
+        myRef.child(event.getEventID()).setValue(event);
     }
 
 

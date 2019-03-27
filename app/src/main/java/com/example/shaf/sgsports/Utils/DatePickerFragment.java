@@ -1,4 +1,4 @@
-package com.example.shaf.sgsports;
+package com.example.shaf.sgsports.Utils;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -14,6 +14,8 @@ import android.text.format.Time;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.example.shaf.sgsports.R;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 

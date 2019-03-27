@@ -1,9 +1,6 @@
 package com.example.shaf.sgsports.Model;
 
-import com.example.shaf.sgsports.SkillLevel;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
