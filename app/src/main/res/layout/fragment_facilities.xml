@@ -2,6 +2,8 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="56dp"
+    android:layout_marginTop="56dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,21 +16,30 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Spinner
-            android:id="@+id/facilities_spinner_cat"
+        <TextView
+            android:id="@+id/facilities_filter_cat"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="40dp"
+            android:background="#ddd"
             android:gravity="center"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:textSize="16sp"
+            android:text="Category"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
             android:layout_weight="1"/>
 
-        <Spinner
-            android:id="@+id/facilities_spinner_loc"
+        <TextView
+            android:id="@+id/facilities_filter_loc"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_height="40dp"
+            android:background="#ddd"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="Location"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
             android:layout_weight="1"/>
 
     </LinearLayout>
@@ -40,10 +51,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/facilities_linearlayout"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="32dp"
-        android:paddingBottom="16dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
 

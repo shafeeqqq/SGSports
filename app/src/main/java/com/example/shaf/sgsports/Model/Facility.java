@@ -6,15 +6,18 @@ public class Facility {
 
     private String facilityID;
     private String name;
-    private String address;
-    private ArrayList<Sport> availSports;
+    private String addressText;
+    private String direction;
+    private String imageUrl;
+    private String operatingHours;
+    private ArrayList<String> facilityInformation;
 
 
-    public Facility(String facilityID, String name, String address, ArrayList<Sport> availSports) {
+    public Facility(String facilityID, String name, String address, ArrayList<Request> facilityInformation) {
         this.facilityID = facilityID;
         this.name = name;
-        this.address = address;
-        this.availSports = availSports;
+        this.addressText = address;
+        this.direction = direction;
     }
 
     public Facility() {}
@@ -27,11 +30,4 @@ public class Facility {
         return name;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public ArrayList<Sport> getAvailSports() {
-        return availSports;
-    }
 }

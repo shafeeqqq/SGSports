@@ -48,13 +48,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             holder.nameTextView.setText(current.getName());
             holder.catTextView.setText("| " + current.getSportsCategory());
 
-            SimpleDateFormat getDate = new SimpleDateFormat("dd MMM, yyyy");
-            holder.dateTextView.setText(getDate.format(current.getDateOfEvent()));
+            holder.dateTextView.setText(current.dateCreatedText());
+            holder.timeTextView.setText(current.timeText());
 
-            String timeText = current.getFromTime() + " - " + current.getToTime();
-            holder.timeTextView.setText(timeText);
-
-            String numText = "Looking for " + current.getMaxParticipants() + " more players";
+            String numText = "Looking for " + current.getVacancy() + " more players";
             holder.numTextView.setText(numText);
 
 
@@ -81,6 +78,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         mEvents = events;
         notifyDataSetChanged();
 
+    }
+
+    public String getEventID(int position) {
+        return mEvents.get(position).getEventID();
     }
 
 

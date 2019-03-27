@@ -2,6 +2,7 @@ package com.example.shaf.sgsports;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.example.shaf.sgsports.CreateEventDetailsFragment.UNKNOWN;
+import static com.example.shaf.sgsports.HomeActivity.LOGIN_PREFS;
+import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,13 +39,11 @@ public class EventSearchFragment extends Fragment {
 
     private static ArrayList<Event> eventArrayList = new ArrayList<Event>();
 
+    SharedPreferences sharedPref;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public static final String EVENT_ID = "eventID";
 
     private OnFragmentInteractionListener mListener;
-
     private RecyclerView recyclerView;
     private EventListAdapter eventListAdapter;
 
@@ -51,11 +54,6 @@ public class EventSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
@@ -69,6 +67,9 @@ public class EventSearchFragment extends Fragment {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("events");
 
+        sharedPref = getActivity().getSharedPreferences(LOGIN_PREFS, getActivity().MODE_PRIVATE);
+        final String userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
+
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -77,7 +78,8 @@ public class EventSearchFragment extends Fragment {
                 eventArrayList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Event event = ds.getValue(Event.class);
-                    eventArrayList.add(event);
+                    if (!event.getOrganiser().equals(userId))
+                        eventArrayList.add(event);
                 }
                 eventListAdapter.setEvents(eventArrayList);
             }
@@ -96,6 +98,7 @@ public class EventSearchFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(view.getContext(), EventDetailsActivity.class);
+                intent.putExtra(EVENT_ID, eventListAdapter.getEventID(position));
                 startActivity(intent);
             }
 
@@ -137,10 +140,6 @@ public class EventSearchFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

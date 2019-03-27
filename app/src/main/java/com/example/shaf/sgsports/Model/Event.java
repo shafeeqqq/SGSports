@@ -2,7 +2,10 @@ package com.example.shaf.sgsports.Model;
 
 import com.example.shaf.sgsports.SkillLevel;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 public class Event {
 
@@ -17,7 +20,8 @@ public class Event {
     private String sportsCategory;
     private int maxParticipants;
     private String description;
-    private SkillLevel skillLevel;
+    private String skillLevel;
+    private Map<String,Request> requests;
 
     public Event() {
 
@@ -26,7 +30,8 @@ public class Event {
     public Event(String eventID, String name, Facility facility, String organiser, Date dateCreated,
                  Date dateOfEvent, String fromTime, String toTime,
                  String sportsCategory, int maxParticipants, String description,
-                 SkillLevel skillLevel) {
+                 String skillLevel) {
+
         this.eventID = eventID;
         this.name = name;
         this.facility = facility;
@@ -39,13 +44,12 @@ public class Event {
         this.maxParticipants = maxParticipants;
         this.description = description;
         this.skillLevel = skillLevel;
-
     }
 
     public Event(String eventID, String name, String organiser, Date dateCreated,
                  Date dateOfEvent, String fromTime, String toTime,
                  String sportsCategory, int maxParticipants, String description,
-                 SkillLevel skillLevel) {
+                 String skillLevel) {
         this.eventID = eventID;
         this.name = name;
         this.organiser = organiser;
@@ -57,6 +61,7 @@ public class Event {
         this.maxParticipants = maxParticipants;
         this.description = description;
         this.skillLevel = skillLevel;
+        this.requests = null;
     }
 
     public String getEventID() {
@@ -65,6 +70,10 @@ public class Event {
 
     public String getName() {
         return name;
+    }
+
+    public Map<String, Request> getRequests() {
+        return requests;
     }
 
     public Facility getFacility() {
@@ -103,7 +112,33 @@ public class Event {
         return description;
     }
 
-    public SkillLevel getSkillLevel() {
+    public String getSkillLevel() {
         return skillLevel;
+    }
+
+
+    public int getVacancy() {
+        int participants = 0;
+
+        if (requests == null || requests.size() == 0)
+            return  maxParticipants-1;
+
+        else {
+            for (Request req: requests.values()) {
+                if (req.isAccepted())
+                    participants += 1;
+            }
+        }
+        return maxParticipants - participants -1;
+    }
+
+
+    public String dateCreatedText() {
+        SimpleDateFormat getDate = new SimpleDateFormat("dd MMM, yyyy");
+        return getDate.format(dateOfEvent);
+    }
+
+    public String timeText() {
+        return fromTime + " - " + toTime;
     }
 }

@@ -1,10 +1,12 @@
 package com.example.shaf.sgsports;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -29,12 +35,15 @@ public class FacilitiesFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    ArrayList<Integer> selectedItems;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private RecyclerView recyclerView;
     private FacilityListAdapter facilityListAdapter;
+    private TextView categoryFilter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -70,10 +79,20 @@ public class FacilitiesFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_facilities, container, false);
+        final Context context = view.getContext();
+        selectedItems = new ArrayList<>();
+
+        categoryFilter = view.findViewById(R.id.facilities_filter_cat);
+        categoryFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCategoryDialog(context);
+            }
+        });
 
         facilityListAdapter = new FacilityListAdapter(view.getContext());
 
@@ -123,6 +142,51 @@ public class FacilitiesFragment extends Fragment {
         return view;
     }
 
+    public void openCategoryDialog(Context context) {
+
+        final boolean[] checkedItems = new boolean[10];
+        for (int i = 0; i < 9; i++) {
+            if (selectedItems != null && selectedItems.contains(i))
+                checkedItems[i] = true;
+            else
+                checkedItems[i] = false;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder.setMultiChoiceItems(R.array.sports_categories, checkedItems,
+                new DialogInterface.OnMultiChoiceClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which,
+                                        boolean isChecked) {
+                        if (isChecked) {
+                            // If the user checked the item, add it to the selected items
+                            selectedItems.add(which);
+                        } else if (selectedItems.contains(which)) {
+                            // Else, if the item is already in the array, remove it
+                            selectedItems.remove(Integer.valueOf(which));
+                        }
+                    }
+                });
+
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+              //
+            }
+        });
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -146,6 +210,9 @@ public class FacilitiesFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
+
 
     /**
      * This interface must be implemented by activities that contain this

@@ -3,19 +3,85 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginBottom="56dp"
+    tools:layout_editor_absoluteY="81dp">
+
+    <!--LinearLayout
+        android:id="@+id/event_search_title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:hint="Search"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="75dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:textSize="16sp"
+            android:textColor="#000"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:text="Badminton" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/event_search_linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/event_search_title">
+
+        <TextView
+            style="@style/ProfileText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="All" />
+
+        <TextView
+            style="@style/ProfileText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="All" />
+
+    </LinearLayout-->
+    
+    
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/eventsearch_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="64dp"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        app:layout_constraintRight_toRightOf="parent" />
+    
 
 
 </android.support.constraint.ConstraintLayout>

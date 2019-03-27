@@ -17,18 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shaf.sgsports.Model.Event;
-import com.example.shaf.sgsports.Model.Facility;
-import com.example.shaf.sgsports.Model.Sport;
+import com.example.shaf.sgsports.Model.User;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -42,7 +40,7 @@ public class CreateEventDetailsFragment extends Fragment {
     public static final String LOGIN_PREFS = "LoginInfo";
     private static final String USER_ACCT_ID = "emailAddress" ;
 
-
+    FirebaseDatabase database;
     SharedPreferences sharedPref;
 
     private String mCategory;
@@ -81,6 +79,8 @@ public class CreateEventDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_create_event_details, container, false);
+
+        database = FirebaseDatabase.getInstance();
 
         eventNameEditText = view.findViewById(R.id.create_event_details_name);
         categoryTextView = view.findViewById(R.id.create_event_details_cat_text);
@@ -124,7 +124,7 @@ public class CreateEventDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 saveData();
-//                getActivity().finish();
+                getActivity().finish();
                 Toast.makeText(view.getContext(), "Event Created", Toast.LENGTH_LONG).show();
             }
         });
@@ -135,7 +135,6 @@ public class CreateEventDetailsFragment extends Fragment {
 
     private void saveData() {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("events");
 
         Date now = new Date();
@@ -168,25 +167,11 @@ public class CreateEventDetailsFragment extends Fragment {
         Event event = new Event(id, eventName,
                 userId,
                 now, date, from, to, sportCategory,
-                maxPlayers, eventDesc, SkillLevel.Advanced);
+                maxPlayers, eventDesc, SkillLevel.Advanced.toString());
+
         myRef.child(id).setValue(event);
 
-
-//        // Read from the database
-//        myRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                String value = dataSnapshot.getValue(String.class);
-//                Log.d(TAG, "Value is: " + value);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                // Failed to read value
-//                Log.w(TAG, "Failed to read value.", error.toException());
-//            }
-//        });
     }
+
+
 }

@@ -6,14 +6,27 @@
         android:id="@+id/profile"
         android:orderInCategory="1"
         android:title="Profile"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:iconTint="#fff"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/notifications"
-        android:orderInCategory="1"
         android:title="Notifications"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/search_badge"
+        android:title="Search"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item
+        android:id="@+id/filter"
+        android:orderInCategory="1"
+        android:title="Filter"
+        android:iconTint="#fff"
+        android:icon="@drawable/ic_filter"
+        app:showAsAction="always" />
+
 </menu>
 

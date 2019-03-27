@@ -1,69 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    tools:context=".EditProfileActivity">
 
     <LinearLayout
-        android:id="@+id/profile_info"
+        android:id="@+id/edit_profile_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
         android:background="@color/colorPrimary"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp"
+        app:layout_collapseMode="pin">
 
         <ImageView
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_gravity="center"
             android:src="@drawable/navigation_circle" />
-
-        <TextView
-            android:id="@+id/profile_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:text="John Watson"
-            android:textSize="20dp" />
-
-
-
-        <RatingBar
-            style="?android:attr/ratingBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:numStars="5"
-            android:rating="3.5"
-            android:layout_marginBottom="8dp"
-            android:stepSize="0.5" />
-
-        <Button
-            android:id="@+id/edit_profile_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Edit Profile" />
-
     </LinearLayout>
 
-    <LinearLayout
 
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".ProfileActivity"
-        tools:showIn="@layout/activity_profile">
+        app:layout_constraintTop_toBottomOf="@id/edit_profile_info">
 
         <TextView
-            android:id="@+id/profile_about_me_title"
+            style="@style/ProfileTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Name"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edit_profile_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:text="John Watson"
+            android:textSize="16sp" />
+
+
+        <TextView
             style="@style/ProfileTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,50 +63,52 @@
             android:text="About Me"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/profile_about_me_text"
-            style="@style/ProfileText"
+        <EditText
+            android:id="@+id/edit_profile_about_me"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
+            android:layout_marginTop="8dp"
             android:paddingBottom="8dp"
-            android:text="I enjoy working out through casual games of basketball and badminton on weekends. Looking for fellow players to hang out!" />
+            android:textSize="16sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#eee" />
+
 
         <!-- Gender -->
-
-        <TextView
-            android:id="@+id/profile_gender_title"
-            style="@style/ProfileTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="Gender"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/profile_gender_text"
-            style="@style/ProfileText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="8dp"
-            android:text="Male" />
-
-        <View
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#eee" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
+
+            <TextView
+                style="@style/ProfileTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Gender"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/edit_profile_gender_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textColor="#222"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
 
 
         <!-- Interests -->
@@ -142,4 +134,4 @@
     </LinearLayout>
 
 
-</android.support.v7.widget.LinearLayoutCompat>
+</android.support.constraint.ConstraintLayout>

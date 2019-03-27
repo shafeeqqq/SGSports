@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.shaf.sgsports.Model.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,14 +23,19 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Date;
+
+import static com.example.shaf.sgsports.HomeActivity.LOGGED_IN_FLAG;
+import static com.example.shaf.sgsports.HomeActivity.LOGIN_PREFS;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final String TAG = "LoginActivity" ;
 
-    public static final String LOGIN_PREFS = "LoginInfo";
-    public static final String LOGGED_IN_FLAG = "isLoggedIn";
-    private static final String USER_ACCT_ID = "emailAddress" ;
+    public static final String USER_ACCT_ID = "emailAddress" ;
     SharedPreferences sharedPref;
 
 
@@ -97,14 +103,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (result.isSuccess()) {
             GoogleSignInAccount account = result.getSignInAccount();
 
-            Toast.makeText(this, "Welcome " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
+            String name = account.getDisplayName();
             String accountId = account.getId();
+
+            Toast.makeText(this, "Welcome " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
+
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean(LOGGED_IN_FLAG, true);
             editor.putString(USER_ACCT_ID, accountId);
             editor.apply();
 
-            Log.e(TAG, account.getIdToken());
+            saveUser(name, accountId);
 
             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -116,8 +125,18 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     }
                 }
             });
-
         }
+    }
+
+    private void saveUser(String name, String accountId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("users");
+
+        Date now = new Date();
+
+        User user = new User(accountId, name, now);
+        myRef.child(accountId).setValue(user);
+
     }
 
     @Override

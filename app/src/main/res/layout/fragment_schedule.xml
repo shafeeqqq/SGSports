@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="56dp"
+    android:layout_marginTop="56dp"
+    android:layout_width="match_parent">
+
+
+<LinearLayout
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent">
@@ -21,11 +28,6 @@
         android:id="@+id/schedule_upcoming_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/facilities_linearlayout"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
     <TextView
@@ -39,17 +41,14 @@
         android:text="Past"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/facilities_past_recycler_view"
+        android:id="@+id/schedule_past_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/facilities_linearlayout"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="32dp"
-        android:paddingBottom="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
 
 </LinearLayout>
+</ScrollView>

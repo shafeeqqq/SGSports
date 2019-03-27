@@ -14,13 +14,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/app_logo"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
         <activity
             android:name=".LoginActivity"
             android:label="Login" />
@@ -28,23 +27,21 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:parentActivityName=".HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName=".HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.shaf.sgsports.HomeActivity" />
         </activity>
-
         <activity
             android:name=".CreateEventActivity"
             android:label="@string/title_activity_create_event"
@@ -53,7 +50,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.shaf.sgsports.HomeActivity" />
         </activity>
-
         <activity
             android:name=".EventDetailsActivity"
             android:label="@string/title_event_details"
@@ -62,7 +58,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.shaf.sgsports.HomeActivity" />
         </activity>
-
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -85,6 +80,13 @@
                 android:value="com.example.shaf.sgsports.HomeActivity" />
         </activity>
 
+        <activity android:name=".EditProfileActivity"
+            android:label="Edit Profile"
+            android:parentActivityName=".ProfileActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.shaf.sgsports.ProfileActivity" />
+        </activity>
 
     </application>
 
