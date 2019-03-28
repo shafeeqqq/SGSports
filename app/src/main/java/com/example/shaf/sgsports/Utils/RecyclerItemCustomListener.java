@@ -1,4 +1,4 @@
-package com.example.shaf.sgsports;
+package com.example.shaf.sgsports.Utils;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

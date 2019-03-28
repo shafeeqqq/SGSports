@@ -7,17 +7,39 @@ public class Facility {
     private String facilityID;
     private String name;
     private String addressText;
-    private String direction;
+    private String phone;
     private String imageUrl;
     private String operatingHours;
-    private ArrayList<String> facilityInformation;
+    private String facilityInformation;
 
-
-    public Facility(String facilityID, String name, String address, ArrayList<Request> facilityInformation) {
+    public Facility(String facilityID, String name, String addressText, String phone, String imageUrl, String operatingHours, String facilityInformation) {
         this.facilityID = facilityID;
         this.name = name;
-        this.addressText = address;
-        this.direction = direction;
+        this.addressText = addressText;
+        this.phone = phone;
+        this.imageUrl = imageUrl;
+        this.operatingHours = operatingHours;
+        this.facilityInformation = facilityInformation;
+    }
+
+    public String getAddressText() {
+        return addressText;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getOperatingHours() {
+        return operatingHours;
+    }
+
+    public String getFacilityInformation() {
+        return facilityInformation;
     }
 
     public Facility() {}

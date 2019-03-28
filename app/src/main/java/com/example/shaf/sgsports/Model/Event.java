@@ -1,5 +1,7 @@
 package com.example.shaf.sgsports.Model;
 
+import com.google.firebase.database.Exclude;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -113,7 +115,7 @@ public class Event {
         return skillLevel;
     }
 
-
+    @Exclude
     public int getVacancy() {
         int participants = 0;
 
@@ -129,7 +131,7 @@ public class Event {
         return maxParticipants - participants -1;
     }
 
-
+    @Exclude
     public String dateCreatedText() {
         SimpleDateFormat getDate = new SimpleDateFormat("dd MMM, yyyy");
         return getDate.format(dateOfEvent);

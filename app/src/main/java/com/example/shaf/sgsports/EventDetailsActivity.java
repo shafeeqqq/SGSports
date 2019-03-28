@@ -32,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +49,10 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     private ValueEventListener mEventDetailsListener;
 
     DatabaseReference requestRef;
+    DatabaseReference userReqRef;
+    FirebaseDatabase database;
+
+    ArrayList<String> userRequestsarray = new ArrayList<>();
 
     private MapView mapView;
     private GoogleMap mMap;
@@ -76,7 +81,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         eventID = getIntent().getStringExtra(EVENT_ID);
         assert eventID != null;
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
         ref = database.getReference("events").child(eventID);
 
         String path = "events/"+ eventID + "/requests";
@@ -116,7 +121,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         requestRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 boolean exists = false;
 
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -147,11 +151,44 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private void storeRequest(String userId) {
         String id = requestRef.push().getKey();
+        String requesterName = getOrganiserName(userId);
 
-        Request request = new Request(id, userId, new Date(), Request.PENDING);
+        Request request = new Request(id, userId, requesterName, new Date(), Request.PENDING);
         requestRef.child(id).setValue(request);
 
+        userReqRef = database.getReference("userRequests/" + userId);
+
+        userReqRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("events"))
+                    loadIntoArray(dataSnapshot.child("events").getValue().toString());
+
+                saveUserRequests();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void saveUserRequests() {
+        userRequestsarray.add(eventID);
+        userReqRef.child("events").setValue(userRequestsarray.toString());
         Toast.makeText(this, "Request Sent", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadIntoArray(String events) {
+        events = events.replace("[", "");
+        events = events.replace("]", "");
+
+        List<String> arr = Arrays.asList(events.split(","));
+
+        for (String item: arr)
+            userRequestsarray.add(item.trim());
     }
 
 

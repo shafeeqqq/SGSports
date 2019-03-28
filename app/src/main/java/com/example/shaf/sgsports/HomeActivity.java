@@ -19,9 +19,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.shaf.sgsports.Model.Event;
+import com.example.shaf.sgsports.Utils.BottomNavigationViewHelper;
+import com.example.shaf.sgsports.Utils.RecyclerItemCustomListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -278,10 +279,12 @@ public class HomeActivity extends AppCompatActivity implements
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.notifications) {
-//            Intent intent = new Intent(this, CategoryListActivity.class);
-//            startActivity(intent);
+
+        } else if (id == R.id.my_requests) {
+            Intent intent = new Intent(this, MyRequestsActivity.class);
+            startActivity(intent);
             return true;
+
         } else if (id == R.id.filter) {
             openCategoryDialog();
         }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +32,13 @@ import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
  * Use the {@link ScheduleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ScheduleFragment extends Fragment {
+public class ScheduleFragment extends Fragment implements View.OnClickListener {
+
+    private static final int PAST_CREATED = 351 ;
+    private static final int PAST_JOINED = 352;
+    private static final int UPCOMING_CREATED = 353 ;
+    private static final int UPCOMING_JOINED = 354 ;
+    private static final String EVENT_TYPE = "event_type" ;
 
     private RecyclerView recyclerView;
     private EventListAdapter upcomingEventListAdapter;
@@ -39,6 +46,11 @@ public class ScheduleFragment extends Fragment {
 
     SharedPreferences sharedPref;
 
+    CardView up_joined;
+    CardView up_created;
+
+    CardView past_joined;
+    CardView past_created;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -69,53 +81,111 @@ public class ScheduleFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_schedule, container, false);
 
-        sharedPref = getActivity().getSharedPreferences(LOGIN_PREFS, getActivity().MODE_PRIVATE);
-        final String userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
+        up_joined = view.findViewById(R.id.upcoming_joined);
+        up_created = view.findViewById(R.id.upcoming_created);
+        past_created = view.findViewById(R.id.past_created);
+        past_joined = view.findViewById(R.id.past_joined);
 
-        upcomingEventListAdapter = new EventListAdapter(view.getContext());
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("events");
-
-        ref.addValueEventListener(new ValueEventListener() {
+        up_joined.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                upcomingEventArrayList.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Event event = ds.getValue(Event.class);
-                    if (event.getOrganiser().equals(userId))
-                        upcomingEventArrayList.add(event);
-
-                }
-                upcomingEventListAdapter.setEvents(upcomingEventArrayList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
+            public void onClick(View v) {
+                launchActivity(UPCOMING_JOINED);
             }
         });
 
-        recyclerView = view.findViewById(R.id.schedule_upcoming_recycler_view);
-        recyclerView.setAdapter(upcomingEventListAdapter);
-
-        recyclerView.addOnItemTouchListener(new RecyclerItemCustomListener(view.getContext(),
-                recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
+        up_created.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(view.getContext(), EventDetailsActivity.class);
-                intent.putExtra(EVENT_ID, upcomingEventListAdapter.getEventID(position));
-                startActivity(intent);
+            public void onClick(View v) {
+                launchActivity(UPCOMING_CREATED);
             }
+        });
 
+        past_joined.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onLongItemClick(View view, int position) {
+            public void onClick(View v) {
+                launchActivity(PAST_JOINED);
             }
-        }));
+        });
+
+        past_created.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchActivity(PAST_CREATED);
+            }
+        });
+
+
+//        sharedPref = getActivity().getSharedPreferences(LOGIN_PREFS, getActivity().MODE_PRIVATE);
+//        final String userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
+//
+//        upcomingEventListAdapter = new EventListAdapter(view.getContext());
+//
+//        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference ref = database.getReference("events");
+//
+//        ref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                upcomingEventArrayList.clear();
+//                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                    Event event = ds.getValue(Event.class);
+//                    if (event.getOrganiser().equals(userId))
+//                        upcomingEventArrayList.add(event);
+//
+//                }
+//                upcomingEventListAdapter.setEvents(upcomingEventArrayList);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//            }
+//        });
+//
+//        recyclerView = view.findViewById(R.id.schedule_upcoming_recycler_view);
+//        recyclerView.setAdapter(upcomingEventListAdapter);
+//
+//        recyclerView.addOnItemTouchListener(new RecyclerItemCustomListener(view.getContext(),
+//                recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                Intent intent = new Intent(view.getContext(), EventDetailsActivity.class);
+//                intent.putExtra(EVENT_ID, upcomingEventListAdapter.getEventID(position));
+//                startActivity(intent);
+//            }
+//
+//            @Override
+//            public void onLongItemClick(View view, int position) {
+//            }
+//        }));
 
         return view;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.past_created:
+                launchActivity(PAST_CREATED);
+                break;
+
+            case R.id.past_joined:
+                launchActivity(PAST_JOINED);
+                break;
+            case R.id.upcoming_created:
+                launchActivity(UPCOMING_CREATED);
+                break;
+            case R.id.upcoming_joined:
+                launchActivity(UPCOMING_JOINED);
+                break;
+        }
+    }
+
+    private void launchActivity(int value) {
+        Intent intent = new Intent(getContext(), ScheduleDetailActivity.class);
+        intent.putExtra(EVENT_TYPE, value);
+        startActivity(intent);
+    }
 }

@@ -12,16 +12,22 @@ public class Request {
 
     private String id;
     private String userID;
+    private String requesterName;
     private Date timeStamp;
     private String status = PENDING;       // accepted pending or reject
+
+    public String getUserName() {
+        return requesterName;
+    }
 
     public Request() {
 
     }
 
-    public Request(String id, String userID, Date timeStamp, String status) {
+    public Request(String id, String userID, String requesterName, Date timeStamp, String status) {
         this.id = id;
         this.userID = userID;
+        this.requesterName = requesterName;
         this.timeStamp = timeStamp;
         this.status = status;
     }
