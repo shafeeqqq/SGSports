@@ -164,7 +164,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                 if (dataSnapshot.hasChild("events"))
                     loadIntoArray(dataSnapshot.child("events").getValue().toString());
 
-                saveUserRequests();
+//                saveUserRequests();
             }
 
             @Override
@@ -186,9 +186,15 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         events = events.replace("]", "");
 
         List<String> arr = Arrays.asList(events.split(","));
+        Log.e("EEE", arr.size() + "is the length");
 
         for (String item: arr)
             userRequestsarray.add(item.trim());
+
+        Log.e("EEE", userRequestsarray.size() + "is the length");
+
+
+
     }
 
 
@@ -280,12 +286,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         LatLng ntu = new LatLng(-1.3483, 103.6831);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ntu,4));
         mMap.addMarker(new MarkerOptions().position(ntu).title("NTU Singapore"));
-
-//        UiSettings uiSettings = mMap.getUiSettings();
-//        uiSettings.setCompassEnabled(true);
-//        uiSettings.setZoomControlsEnabled(true);
-//        uiSettings.setRotateGesturesEnabled(true);
-//        uiSettings.setZoomGesturesEnabled(true);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ntu,4));
     }
