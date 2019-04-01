@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -157,7 +158,9 @@ public class HomeActivity extends AppCompatActivity implements
 
         Toolbar toolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setElevation(0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(0);
+        }
 
         db = FirebaseFirestore.getInstance();
         sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
@@ -342,7 +345,7 @@ public class HomeActivity extends AppCompatActivity implements
                     check = true;
                 else
                     check = false;
-                filterEvents();
+                filterCategory();
             }
         });
 
@@ -355,6 +358,21 @@ public class HomeActivity extends AppCompatActivity implements
         // Create the AlertDialog
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void filterCategory() {
+//        ArrayList<Event> arr = new ArrayList<>();
+//
+//        if (selectedItems.isEmpty())
+//            eventListAdapter.setEvents(eventArrayList);
+//
+//        for (Event event: eventArrayList) {
+//            Log.e(TAG, event.getName() + s);
+//            if (event.getName().toLowerCase().contains(s))
+//                arr.add(event);
+//        }
+//
+//        eventListAdapter.setEvents(arr);
     }
 
     private void filterEvents() {

@@ -282,7 +282,7 @@ public class CreateEventDetailsFragment extends Fragment {
 
         String eventID = db.collection("events").document().getId();
         String eventName = eventNameEditText.getText().toString();
-        Integer maxPlayers = Integer.getInteger(numPlayersEditText.getText().toString().trim());
+        Integer maxPlayers = Integer.parseInt(numPlayersEditText.getText().toString().trim());
 
         Log.e(TAG, maxPlayers + " max players " + numPlayersEditText.getText().toString().trim());
         String eventDesc = descEditText.getText().toString();

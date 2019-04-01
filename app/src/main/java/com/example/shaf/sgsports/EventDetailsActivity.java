@@ -266,6 +266,12 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                         String numText = currentEvent.getMaxParticipants() + " Players";
                         maxPlayersTextView.setText(numText);
 
+                        if (currentEvent.getVacancy()==0){
+                            joinButton.setAlpha(.5f);
+                            joinButton.setClickable(false);
+                            joinButton.setText("Event is Full ");
+                        }
+
                         String descText = currentEvent.getDescription();
                         if (descText.equals(""))
                             descTextView.setText(getString(R.string.no_description_given));
