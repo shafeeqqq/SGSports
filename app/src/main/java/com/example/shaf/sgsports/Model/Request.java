@@ -12,6 +12,7 @@ public class Request implements Serializable {
     private String id;
     private String userID;
     private String requesterName;
+    private String requesterIcon;
     private Date timeStamp;
     private String status = PENDING;       // accepted pending or reject
 
@@ -36,6 +37,10 @@ public class Request implements Serializable {
         return timeStamp;
     }
 
+    public String getRequesterIcon() {
+        return requesterIcon;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -44,10 +49,11 @@ public class Request implements Serializable {
         this.status = status;
     }
 
-    public Request(String id, String userID, String requesterName, Date timeStamp, String status) {
+    public Request(String id, String userID, String requesterName, String requesterIcon, Date timeStamp, String status) {
         this.id = id;
         this.userID = userID;
         this.requesterName = requesterName;
+        this.requesterIcon = requesterIcon;
         this.timeStamp = timeStamp;
         this.status = status;
     }

@@ -179,9 +179,24 @@ public class CreateEventDetailsFragment extends Fragment {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveData();
-                getActivity().finish();
-                Toast.makeText(view.getContext(), "Event Created", Toast.LENGTH_LONG).show();
+                Integer maxPlayers = null;
+                try {
+                     maxPlayers = Integer.parseInt(numPlayersEditText.getText().toString().trim());
+                } catch (java.lang.NumberFormatException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+
+                if (eventNameEditText.getText().toString().isEmpty())
+                    Toast.makeText(getContext(), "Please enter a Name.", Toast.LENGTH_LONG).show();
+                else if (locationText.getText().toString().equals("Choose location"))
+                    Toast.makeText(getContext(), "Please choose a location.", Toast.LENGTH_LONG).show();
+                else if (maxPlayers ==null || maxPlayers < 1)
+                    Toast.makeText(getContext(), "Maximum no. of players has to be atleast 1.", Toast.LENGTH_LONG).show();
+                else {
+                    saveData();
+                    getActivity().finish();
+                    Toast.makeText(view.getContext(), "Event Created", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -264,9 +279,19 @@ public class CreateEventDetailsFragment extends Fragment {
                             createButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    updateEvent();
-                                    getActivity().finish();
-                                    Toast.makeText(getContext(), "Event Updated.", Toast.LENGTH_LONG).show();
+                                    Integer maxPlayers = Integer.parseInt(numPlayersEditText.getText().toString().trim());
+
+                                    if (eventNameEditText.getText().toString().isEmpty())
+                                        Toast.makeText(getContext(), "Please enter a Name.", Toast.LENGTH_LONG).show();
+                                    else if (locationText.getText().toString().equals("Choose location"))
+                                        Toast.makeText(getContext(), "Please choose a location.", Toast.LENGTH_LONG).show();
+                                    else if (maxPlayers==null || maxPlayers < 1)
+                                        Toast.makeText(getContext(), "Maximum no. of players has to be atleast 1.", Toast.LENGTH_LONG).show();
+                                    else {
+                                        updateEvent();
+                                        getActivity().finish();
+                                        Toast.makeText(getContext(), "Event Updated.", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                         }
@@ -282,9 +307,12 @@ public class CreateEventDetailsFragment extends Fragment {
 
         String eventID = db.collection("events").document().getId();
         String eventName = eventNameEditText.getText().toString();
-        Integer maxPlayers = Integer.parseInt(numPlayersEditText.getText().toString().trim());
-
-        Log.e(TAG, maxPlayers + " max players " + numPlayersEditText.getText().toString().trim());
+        Integer maxPlayers = null;
+        try {
+            maxPlayers = Integer.parseInt(numPlayersEditText.getText().toString().trim());
+        } catch (java.lang.NumberFormatException e) {
+            Log.e(TAG, e.getMessage());
+        }
         String eventDesc = descEditText.getText().toString();
 
         String dateText = dateTextView.getText().toString();
@@ -322,7 +350,12 @@ public class CreateEventDetailsFragment extends Fragment {
         if (!eventName.isEmpty())
             localEvent.setName(eventName);
 
-        Integer maxPlayers = Integer.getInteger(numPlayersEditText.getText().toString().trim());
+        Integer maxPlayers = null;
+        try {
+            maxPlayers = Integer.parseInt(numPlayersEditText.getText().toString().trim());
+        } catch (java.lang.NumberFormatException e) {
+            Log.e(TAG, e.getMessage());
+        }
         if (maxPlayers != null)
             localEvent.setMaxParticipants(maxPlayers);
 

@@ -39,6 +39,7 @@ import java.util.Date;
 
 import static com.example.shaf.sgsports.CreateEventDetailsFragment.UNKNOWN;
 import static com.example.shaf.sgsports.HomeActivity.LOGIN_PREFS;
+import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ICON;
 import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
 import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_NAME;
 
@@ -52,6 +53,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     RecyclerView recyclerView;
 
     String requesterName = "";
+    String requesterIcon = "";
     private Event localEvent;
 
     ArrayList<String> userRequestsarray = new ArrayList<>();
@@ -87,6 +89,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         SharedPreferences sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
         userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
         requesterName = sharedPref.getString(USER_ACCT_NAME, UNKNOWN);
+        requesterIcon = sharedPref.getString(USER_ACCT_ICON, UNKNOWN);
+
 
         eventID = getIntent().getStringExtra(EVENT_ID);
         assert eventID != null;
@@ -122,18 +126,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         });
 
         recyclerView = findViewById(R.id.event_details_recycler);
-//        recyclerView.addOnItemTouchListener(new RecyclerItemCustomListener(this,
-//                recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                if (localEvent!=null)
-//                    updateRequests(localEvent.queryPendingRequests());
-//            }
-//
-//            @Override
-//            public void onLongItemClick(View view, int position) {
-//            }
-//        }));
 
         mapView = findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
@@ -225,7 +217,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             }
         }
 
-        Request request = new Request(requestId, userId, requesterName, new Date(), Request.PENDING);
+        Request request = new Request(requestId, userId, requesterName, requesterIcon, new Date(), Request.PENDING);
         DocumentReference ref = db.collection("events").document(eventID);
         ref.update("requests", FieldValue.arrayUnion(request));
 
@@ -249,7 +241,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Event currentEvent = documentSnapshot.toObject(Event.class);
+                    final Event currentEvent = documentSnapshot.toObject(Event.class);
                     if (currentEvent != null) {
                         if (currentEvent.getOrganiser().equals(userId)) {
                             setOrganiserUI(currentEvent.queryPendingRequests());
@@ -262,6 +254,15 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                         skillLvlTextView.setText(currentEvent.getSkillLevel());
                         dateTextView.setText(currentEvent.dateCreatedText());
                         timeTextView.setText(currentEvent.timeText());
+                        addressTextView.setText(currentEvent.getAddress());
+                        organiserNameTextView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(EventDetailsActivity.this, ProfileActivity.class);
+                                intent.putExtra(USER_ACCT_ID, currentEvent.getOrganiser());
+                                startActivity(intent);
+                            }
+                        });
 
                         String numText = currentEvent.getMaxParticipants() + " Players";
                         maxPlayersTextView.setText(numText);

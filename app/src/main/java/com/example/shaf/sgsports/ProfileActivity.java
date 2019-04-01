@@ -1,15 +1,21 @@
 package com.example.shaf.sgsports;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.shaf.sgsports.Model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class ProfileActivity extends AppCompatActivity {
@@ -21,6 +27,8 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String userId;
     private TextView nameTextView;
+    private TextView aboutMeTextView;
+    private CircleImageView profileIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +36,17 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         getSupportActionBar().setElevation(0);
 
-        userId = getIntent().getStringExtra(USER_ACCT_ID);
+        ConstraintLayout con = findViewById(R.id.profile_view_container);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) con.getLayoutParams();
+        params.topMargin = 0;
+//        con.setLayoutParams(params);
         db = FirebaseFirestore.getInstance();
 
         Button editProfileButton = findViewById(R.id.edit_profile_button);
         editProfileButton.setVisibility(View.GONE);
         nameTextView = findViewById(R.id.profile_name);
+        profileIcon = findViewById(R.id.profile_icon);
+        aboutMeTextView = findViewById(R.id.profile_about_me_text);
 
         setTitle("");
 
@@ -49,9 +62,13 @@ public class ProfileActivity extends AppCompatActivity {
                 });
     }
 
-    private void updateUI(User user) {
-        nameTextView.setText(user.getName());
-    }
+    private void updateUI(User currentUser) {
+        nameTextView.setText(currentUser.getName());
+        String aboutMe = currentUser.getAboutMe();
+        if (aboutMe != null && !aboutMe.isEmpty())
+            aboutMeTextView.setText(aboutMe);
+        if (currentUser.getImageURL() != null)
+            Glide.with(this).load(currentUser.getImageURL()).into(profileIcon);    }
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,5 +98,15 @@ public class ProfileActivity extends AppCompatActivity {
 //
 //        return super.onOptionsItemSelected(item);
 //    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return(super.onOptionsItemSelected(item));
+    }
 
 }

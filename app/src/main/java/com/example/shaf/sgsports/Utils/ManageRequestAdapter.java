@@ -1,6 +1,7 @@
 package com.example.shaf.sgsports.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.shaf.sgsports.Model.Event;
 import com.example.shaf.sgsports.Model.Request;
+import com.example.shaf.sgsports.ProfileActivity;
 import com.example.shaf.sgsports.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -67,10 +69,13 @@ public class ManageRequestAdapter extends RecyclerView.Adapter<ManageRequestAdap
         if (mRequest != null) {
             final Request current = mRequest.get(position);
             holder.nameTextView.setText(current.getRequesterName());
+
             holder.nameTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, "press", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mContext, ProfileActivity.class);
+                    intent.putExtra(USER_ACCT_ID, current.getUserID());
+                    mContext.startActivity(intent);
                 }
             });
 

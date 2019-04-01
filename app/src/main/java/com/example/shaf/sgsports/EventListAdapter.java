@@ -60,6 +60,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
             holder.dateTextView.setText(current.dateCreatedText());
             holder.timeTextView.setText(current.timeText());
+            holder.locationTextView.setText(current.getAddress());
 
             int vacancy = current.getVacancy();
             String numText = "";

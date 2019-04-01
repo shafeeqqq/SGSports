@@ -67,17 +67,13 @@ public class EventSearchFragment extends Fragment {
                     public void onEvent(@Nullable QuerySnapshot snapshots,
                                         @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.e(TAG, "Listen failed.", e);
                             return;
                         }
                         if (snapshots.isEmpty())
-                            Log.e(TAG, "No data");
                         eventArrayList.clear();
                         for (QueryDocumentSnapshot doc : snapshots) {
 
                             Event event = doc.toObject(Event.class);
-                            Log.e(TAG, event.getOrganiser() + "< organiser");
-                            Log.e(TAG, userId+ "< acct ID");
                             if (!event.getOrganiser().equals(userId))
                                 eventArrayList.add(event);
                         }

@@ -7,8 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.shaf.sgsports.Model.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -40,6 +42,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     public static final String USER_ACCT_ID = "emailAddress" ;
     public static final String USER_ACCT_NAME = "user-name" ;
+    public static final String USER_ACCT_ICON = "profile-icon" ;
 
     SharedPreferences sharedPref;
     FirebaseFirestore db;
@@ -58,6 +61,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        ImageView logo = findViewById(R.id.login_logo);
+        Glide.with(this).load(R.drawable.fullsize_logo).into(logo);
 
         SignInButton mSignInButton = findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(this);
@@ -101,11 +106,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (result.isSuccess()) {
 
             final GoogleSignInAccount account = result.getSignInAccount();
-            assert account != null;
+            Log.e(TAG, account.getId() + "IMG URL");
+
 
             final String name = account.getGivenName();
             String accountId = account.getId();
             String imgUrl = String.valueOf(account.getPhotoUrl());
+
+            Log.e(TAG, imgUrl + "IMG URL");
 
             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -118,19 +126,27 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 }
             });
 
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean(LOGGED_IN_FLAG, true);
-            editor.putString(USER_ACCT_ID, accountId);
-            editor.putString(USER_ACCT_NAME, name);
-            editor.apply();
+            if (account != null) {
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean(LOGGED_IN_FLAG, true);
+                editor.putString(USER_ACCT_ID, accountId);
+                editor.putString(USER_ACCT_NAME, name);
+                editor.putString(USER_ACCT_ICON, imgUrl);
+                editor.apply();
 
-            processUser(name, accountId, imgUrl);
+                processUser(name, accountId, imgUrl);
+            }
+
+            else
+                Toast.makeText(this, "Login Failed. Please try again.", Toast.LENGTH_LONG).show();
 
         }
+
+
     }
 
     private void processUser(String name, String accountId, String imgUrl) {
-        final User user = new User(accountId, name, new Date());
+        final User user = new User(accountId, name, new Date(), imgUrl);
 
         db.collection("users").whereEqualTo("userID", accountId).get().
                 addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -141,7 +157,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         initialiseUser(user);
                         Log.e(TAG, "New User");
                     }
-                    Log.e(TAG, "Old User");
+                    else {
+                        Log.e(TAG, "Old User");
+                    }
                 }
             }
         });
@@ -159,8 +177,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         data.put("requested", emptyList);
         data.put("rejected", emptyList);
 
-
         db.collection("userInEvents").document(user.getUserID()).set(data);
+
     }
 
     @Override

@@ -1,12 +1,10 @@
 package com.example.shaf.sgsports;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
+import android.view.MenuItem;
 
 public class CreateEventActivity extends AppCompatActivity implements CategoryListFragment.OnFragmentInteractionListener {
 
@@ -39,5 +37,15 @@ public class CreateEventActivity extends AppCompatActivity implements CategoryLi
                 .addToBackStack(null)
                 .commit();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return(super.onOptionsItemSelected(item));
     }
 }

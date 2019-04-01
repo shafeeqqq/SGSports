@@ -193,6 +193,8 @@ public class HomeActivity extends AppCompatActivity implements
         } else if (requestCode == LOGIN_INTENT_CODE) {
             isLoggedIn = sharedPref.getBoolean(LOGGED_IN_FLAG, false);
 
+            recreate();
+
             String log_msg = "ONRESULT: isLoggedIn = " + String.valueOf(isLoggedIn);
             Log.i(TAG, log_msg);
         }
@@ -207,6 +209,7 @@ public class HomeActivity extends AppCompatActivity implements
             // Not signed in, launch the Sign In activity
             startActivityForResult(new Intent(this, LoginActivity.class), LOGIN_INTENT_CODE);
         }
+
     }
 
     /**

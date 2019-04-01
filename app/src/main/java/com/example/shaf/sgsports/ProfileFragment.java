@@ -13,10 +13,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.shaf.sgsports.Model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.shaf.sgsports.CreateEventDetailsFragment.UNKNOWN;
@@ -35,7 +38,7 @@ public class ProfileFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Button editProfileButton;
+
 
     public static final String LOGIN_PREFS = "LoginInfo";
     public static final String LOGGED_IN_FLAG = "isLoggedIn";
@@ -45,7 +48,9 @@ public class ProfileFragment extends Fragment {
     private String userId;
 
     private TextView nameTextView;
-    private Button buttonView;
+    private TextView aboutMeTextView;
+    private Button editProfileButton;
+    private CircleImageView profileIcon;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -88,10 +93,10 @@ public class ProfileFragment extends Fragment {
         Log.e("profile fragment", "user id:" + userId);
 
         db = FirebaseFirestore.getInstance();
+
         nameTextView = view.findViewById(R.id.profile_name);
-
-
-
+        profileIcon = view.findViewById(R.id.profile_icon);
+        aboutMeTextView = view.findViewById(R.id.profile_about_me_text);
         editProfileButton = view.findViewById(R.id.edit_profile_button);
         editProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,12 +112,16 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         User currentUser = documentSnapshot.toObject(User.class);
-                        if (currentUser != null)
+                        if (currentUser != null) {
                             nameTextView.setText(currentUser.getName());
-
+                            String aboutMe = currentUser.getAboutMe();
+                            if (aboutMe != null && !aboutMe.isEmpty())
+                                aboutMeTextView.setText(aboutMe);
+                            if (currentUser.getImageURL() != null)
+                                Glide.with(getContext()).load(currentUser.getImageURL()).into(profileIcon);
+                        }
                     }
                 });
-
 
         return view;
 

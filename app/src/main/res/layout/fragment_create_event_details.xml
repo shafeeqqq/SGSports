@@ -275,7 +275,7 @@
                     android:layout_gravity="center_horizontal"
                     android:entries="@array/skill_level"
                     android:gravity="center_horizontal"
-                    android:text="16:00" />
+                    android:text="17:00" />
 
             </LinearLayout>
 

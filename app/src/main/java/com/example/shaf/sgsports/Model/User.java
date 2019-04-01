@@ -19,7 +19,6 @@ public class User {
         this.name = name;
         this.userID = userID;
         this.aboutMe = aboutMe;
-
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
         this.rating = rating;
@@ -28,10 +27,11 @@ public class User {
         this.imageURL = imageURL;
     }
 
-    public User(String userID, String name, Date joinDate) {
+    public User(String userID, String name, Date joinDate, String imageURL) {
         this.name = name;
         this.userID = userID;
         this.joinDate = joinDate;
+        this.imageURL = imageURL;
     }
 
 

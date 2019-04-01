@@ -71,7 +71,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/event_details_org_pic"
                     android:layout_width="36dp"
                     android:layout_height="36dp"

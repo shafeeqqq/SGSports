@@ -101,6 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
+                android:layout_marginTop="4dp"
                 android:paddingRight="16dp"
                 android:text="male"
                 android:textColor="#222"
@@ -110,7 +111,7 @@
 
 
 
-        <!-- Interests -->
+        <!-- Interests >
 
         <TextView
             android:id="@+id/profile_interests_title"
@@ -127,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-        </ListView>
+        </ListView-->
 
 
     </LinearLayout>
