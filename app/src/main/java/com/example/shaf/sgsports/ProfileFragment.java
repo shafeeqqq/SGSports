@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,20 +85,12 @@ public class ProfileFragment extends Fragment {
 
         sharedPref = view.getContext().getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
         userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
+        Log.e("profile fragment", "user id:" + userId);
 
         db = FirebaseFirestore.getInstance();
         nameTextView = view.findViewById(R.id.profile_name);
 
-        db.collection("users").document(userId).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        User currentUser = documentSnapshot.toObject(User.class);
-                        assert currentUser != null;
-                        nameTextView.setText(currentUser.getName());
 
-                    }
-                });
 
         editProfileButton = view.findViewById(R.id.edit_profile_button);
         editProfileButton.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +101,17 @@ public class ProfileFragment extends Fragment {
                 startActivityForResult(intent, EDIT_PROFILE);
             }
         });
+
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        User currentUser = documentSnapshot.toObject(User.class);
+                        if (currentUser != null)
+                            nameTextView.setText(currentUser.getName());
+
+                    }
+                });
 
 
         return view;

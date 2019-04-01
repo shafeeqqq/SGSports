@@ -1,11 +1,13 @@
 package com.example.shaf.sgsports;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,12 +26,16 @@ import com.example.shaf.sgsports.Utils.DatePickerFragment;
 import com.example.shaf.sgsports.Utils.TimePickerFragment;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static com.example.shaf.sgsports.ChooseFacilityActivity.FACILITY_ID;
 import static com.example.shaf.sgsports.EventSearchFragment.EVENT_ID;
@@ -53,6 +59,7 @@ public class CreateEventDetailsFragment extends Fragment {
     FirebaseDatabase database;
     SharedPreferences sharedPref;
 
+
     private String mCategory;
     private SkillLevel skillLevel;
     private int numPlayers;
@@ -73,6 +80,9 @@ public class CreateEventDetailsFragment extends Fragment {
     private Button createButton;
     FirebaseFirestore db;
     String eventId;
+    Event localEvent;
+
+    final int[] checkedItem = {0};
 
 
     public CreateEventDetailsFragment() {
@@ -125,6 +135,12 @@ public class CreateEventDetailsFragment extends Fragment {
         eventNameEditText = view.findViewById(R.id.create_event_details_name);
         categoryTextView = view.findViewById(R.id.create_event_details_cat_text);
         categoryTextView.setText(mCategory);
+        categoryTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCategoryDialog();
+            }
+        });
 
         numPlayersEditText = view.findViewById(R.id.create_event_details_num_text);
         descEditText = view.findViewById(R.id.create_event_details_desc);
@@ -134,7 +150,6 @@ public class CreateEventDetailsFragment extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 DialogFragment newFragment = new DatePickerFragment();
-
                 newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
                 return false;
             }
@@ -164,7 +179,7 @@ public class CreateEventDetailsFragment extends Fragment {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                saveData();
+                saveData();
                 getActivity().finish();
                 Toast.makeText(view.getContext(), "Event Created", Toast.LENGTH_LONG).show();
             }
@@ -188,7 +203,38 @@ public class CreateEventDetailsFragment extends Fragment {
         return view;
     }
 
+    private void openCategoryDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        final List<String> categoryArray = Arrays.asList(getResources().getStringArray(R.array.sports_categories));
+        int index = categoryArray.indexOf(mCategory);
+
+        builder.setSingleChoiceItems(R.array.sports_categories, index, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    checkedItem[0] = which;
+                }
+            });
+
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    String gender = categoryArray.get(checkedItem[0]);
+                    categoryTextView.setText(gender);
+                }
+            });
+
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+    }
+
     private void loadEvent() {
+        final List<String> skillArray = Arrays.asList(getResources().getStringArray(R.array.skill_level));
         db.collection("events").document(eventId).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -196,20 +242,33 @@ public class CreateEventDetailsFragment extends Fragment {
                         Event currentEvent = documentSnapshot.toObject(Event.class);
 
                         if (currentEvent != null) {
+                            localEvent = currentEvent;
+                            eventNameEditText.setText(currentEvent.getName());
                             categoryTextView.setText(currentEvent.getSportsCategory());
-                            skillLevelSpinner.setSelection(0);
+                            mCategory = currentEvent.getSportsCategory();
+                            skillLevelSpinner.setSelection(skillArray.indexOf(currentEvent.getSkillLevel()));
                             dateTextView.setText(currentEvent.dateCreatedText());
                             fromTimeTextView.setText(currentEvent.getFromTime());
                             toTimeTextView.setText(currentEvent.getToTime());
                             locationText.setText(currentEvent.getAddress());
 
-                            numPlayersEditText.setText(currentEvent.getMaxParticipants());
+                            numPlayersEditText.setText(String.valueOf(currentEvent.getMaxParticipants()));
 
                             String descText = currentEvent.getDescription();
                             if (descText.equals(""))
                                 descEditText.setHint("Add Description");
                             else
                                 descEditText.setText(currentEvent.getDescription());
+
+                            createButton.setText("update");
+                            createButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    updateEvent();
+                                    getActivity().finish();
+                                    Toast.makeText(getContext(), "Event Updated.", Toast.LENGTH_LONG).show();
+                                }
+                            });
                         }
                     }
                 });
@@ -223,7 +282,9 @@ public class CreateEventDetailsFragment extends Fragment {
 
         String eventID = db.collection("events").document().getId();
         String eventName = eventNameEditText.getText().toString();
-        Integer maxPlayers = Integer.getInteger(numPlayersEditText.getText().toString());
+        Integer maxPlayers = Integer.getInteger(numPlayersEditText.getText().toString().trim());
+
+        Log.e(TAG, maxPlayers + " max players " + numPlayersEditText.getText().toString().trim());
         String eventDesc = descEditText.getText().toString();
 
         String dateText = dateTextView.getText().toString();
@@ -250,16 +311,55 @@ public class CreateEventDetailsFragment extends Fragment {
                 now, date, from, to, sportCategory,
                 maxPlayers, eventDesc, skill);
 
-//        saveUserInEvent(userId, eventID);
+        saveUserInEvent(userId, eventID);
         db.collection("events").document(eventID).set(event);
 
     }
-//
-//    private void saveUserInEvent(String userId, String id) {
-//        DocumentReference ref = db.collection("userInEvents").document(userId);
-//        ref.update("created", FieldValue.arrayUnion(id));
-//        Log.e(TAG, "user in events updated");
-//    }
+
+    private void updateEvent() {
+
+        String eventName = eventNameEditText.getText().toString();
+        if (!eventName.isEmpty())
+            localEvent.setName(eventName);
+
+        Integer maxPlayers = Integer.getInteger(numPlayersEditText.getText().toString().trim());
+        if (maxPlayers != null)
+            localEvent.setMaxParticipants(maxPlayers);
+
+        String eventDesc = descEditText.getText().toString();
+        localEvent.setDescription(eventDesc);
+
+        String skill = skillLevelSpinner.getSelectedItem().toString();
+        localEvent.setSkillLevel(skill);
+
+        String dateText = dateTextView.getText().toString();
+        SimpleDateFormat getDate = new SimpleDateFormat("dd MMM, yyyy");
+        Date date;
+        try {
+            date = getDate.parse(dateText);
+            localEvent.setDateOfEvent(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String from = fromTimeTextView.getText().toString();
+        localEvent.setFromTime(from);
+
+        String to = toTimeTextView.getText().toString();
+        localEvent.setToTime(to);
+
+        String sportCategory = categoryTextView.getText().toString();
+        localEvent.setSportsCategory(sportCategory);
+
+        db.collection("events").document(eventId).set(localEvent);
+
+    }
+
+    private void saveUserInEvent(String userId, String id) {
+        DocumentReference ref = db.collection("userInEvents").document(userId);
+        ref.update("created", FieldValue.arrayUnion(id));
+        Log.e(TAG, "user in events updated");
+    }
 
 
 }

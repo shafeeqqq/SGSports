@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,15 +67,22 @@ public class ManageRequestAdapter extends RecyclerView.Adapter<ManageRequestAdap
         if (mRequest != null) {
             final Request current = mRequest.get(position);
             holder.nameTextView.setText(current.getRequesterName());
+            holder.nameTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "press", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             holder.acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.e("requestAdapter","enter accept" );
                     if (mEvent.getVacancy() > 0) {
                         updateRequestStatus(current.getId(), current.getUserID(), ACCEPT, pos);
                         holder.acceptButton.setAlpha(.5f);
                         holder.acceptButton.setClickable(false);
-                        Toast.makeText(mContext, "Processing...", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(mContext, "Processing...", Toast.LENGTH_LONG).show();
                     }
                     else
                         Toast.makeText(mContext, "Event is Full!", Toast.LENGTH_SHORT).show();
@@ -84,10 +92,12 @@ public class ManageRequestAdapter extends RecyclerView.Adapter<ManageRequestAdap
             holder.declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.e("requestAdapter","enter decline" );
+
                     updateRequestStatus(current.getId(), current.getUserID(), DECLINE, pos);
                     holder.declineButton.setAlpha(.5f);
                     holder.declineButton.setClickable(false);
-                    Toast.makeText(mContext, "Processing...", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(mContext, "Processing...", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -99,12 +109,17 @@ public class ManageRequestAdapter extends RecyclerView.Adapter<ManageRequestAdap
 
     private void updateRequestStatus(final String requestID, String requesterID, final int flag, int position) {
         DocumentReference ref = db.collection("userInEvents").document(requesterID);
+        Log.e("requestAdapter","enter update method" );
 
         // update userInEvents
         if (flag == ACCEPT) {
             ref.update("joined", FieldValue.arrayUnion(eventID));
             Toast.makeText(mContext, "Accepted request.", Toast.LENGTH_SHORT).show();
+            Log.e("requestAdapter","enter accept flag" );
+
         } else if (flag == DECLINE) {
+            Log.e("requestAdapter","enter accept flag" );
+
             ref.update("rejected", FieldValue.arrayUnion(eventID));
             Toast.makeText(mContext, "Declined request.", Toast.LENGTH_SHORT).show();
 

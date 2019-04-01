@@ -302,7 +302,8 @@ public class HomeActivity extends AppCompatActivity implements
             editor.apply();
 
             FirebaseAuth.getInstance().signOut();
-            finish();
+            fm.beginTransaction().remove(active_fragment).commit();
+            recreate();
             return true;
         }
 

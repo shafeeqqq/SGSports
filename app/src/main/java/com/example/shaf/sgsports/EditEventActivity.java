@@ -50,7 +50,7 @@ public class EditEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_create_event_details);
+        setContentView(R.layout.activity_edit_event);
 
         String eventId = getIntent().getStringExtra(EVENT_ID);
 

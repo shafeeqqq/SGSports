@@ -10,6 +10,4 @@
     tools:showIn="@layout/activity_profile"
     tools:context=".ProfileActivity">
 
-
-
 </android.support.v4.widget.NestedScrollView>

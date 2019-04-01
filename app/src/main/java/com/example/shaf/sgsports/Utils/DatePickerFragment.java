@@ -56,6 +56,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
         DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
         dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+
         // Create a new instance of DatePickerDialog and return it
         return dialog;
     }

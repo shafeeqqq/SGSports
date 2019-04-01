@@ -164,6 +164,7 @@ public class Event {
         return "NO";
     }
 
+    @com.google.firebase.firestore.Exclude
     public void updateRequestStatus(String requestID, int flag) {
         for (Request item: requests) {
             if (item.getId().equals(requestID)) {
@@ -176,6 +177,47 @@ public class Event {
     }
 
     @com.google.firebase.firestore.Exclude
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public void setFacility(Facility facility) {
+        this.facility = facility;
+    }
+
+    public void setDateOfEvent(Date dateOfEvent) {
+        this.dateOfEvent = dateOfEvent;
+    }
+
+    public void setFromTime(String fromTime) {
+        this.fromTime = fromTime;
+    }
+
+    public void setToTime(String toTime) {
+        this.toTime = toTime;
+    }
+
+    public void setSkillLevel(String skillLevel) {
+        this.skillLevel = skillLevel;
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public void setSportsCategory(String sportsCategory) {
+        this.sportsCategory = sportsCategory;
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @com.google.firebase.firestore.Exclude
     public ArrayList<Request> queryPendingRequests() {
         ArrayList<Request> result = new ArrayList<Request>();
 
@@ -183,7 +225,6 @@ public class Event {
             if (req.isPending())
                 result.add(req);
         }
-
         return result;
     }
 

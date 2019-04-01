@@ -20,7 +20,6 @@ import com.example.shaf.sgsports.Model.Event;
 import com.example.shaf.sgsports.Model.Request;
 import com.example.shaf.sgsports.Model.User;
 import com.example.shaf.sgsports.Utils.ManageRequestAdapter;
-import com.example.shaf.sgsports.Utils.RecyclerItemCustomListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -123,18 +122,18 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         });
 
         recyclerView = findViewById(R.id.event_details_recycler);
-        recyclerView.addOnItemTouchListener(new RecyclerItemCustomListener(this,
-                recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (localEvent!=null)
-                    updateRequests(localEvent.queryPendingRequests());
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-            }
-        }));
+//        recyclerView.addOnItemTouchListener(new RecyclerItemCustomListener(this,
+//                recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                if (localEvent!=null)
+//                    updateRequests(localEvent.queryPendingRequests());
+//            }
+//
+//            @Override
+//            public void onLongItemClick(View view, int position) {
+//            }
+//        }));
 
         mapView = findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
@@ -157,6 +156,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     private void setOrganiserUI(ArrayList<Request> requests) {
         Log.e(TAG, "filter requests: " + requests.toString());
 
+        updateRequests(requests);
+
         mapView.setVisibility(View.GONE);
         findViewById(R.id.event_details_host_info).setVisibility(View.GONE);
         joinButton.setVisibility(View.GONE);
@@ -165,6 +166,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         requestContainer.setVisibility(View.VISIBLE);
 
         Button editEventButton = findViewById(R.id.edit_event_button);
+        editEventButton.setVisibility(View.VISIBLE);
         editEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,7 +176,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             }
         });
 
-        updateRequests(requests);
     }
 
     private void updateRequests(ArrayList<Request> requests) {

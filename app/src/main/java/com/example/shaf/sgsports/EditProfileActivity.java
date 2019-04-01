@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shaf.sgsports.Model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -17,6 +18,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
 
@@ -56,11 +59,10 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     private void showGenderDialog() {
+        final List<String> genderArray = Arrays.asList(getResources().getStringArray(R.array.gender));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setSingleChoiceItems(R.array.gender, checkedItem[0], new DialogInterface.OnClickListener() {
@@ -72,7 +74,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-               //
+                String gender = genderArray.get(checkedItem[0]);
+                mUser.setGender(gender);
+                genderText.setText(gender);
             }
         });
 
@@ -86,13 +90,6 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
-
     private void getUser(String userId) {
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -101,6 +98,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         User currentUser = documentSnapshot.toObject(User.class);
 
                         if (currentUser != null) {
+                            mUser = currentUser;
                             nameEditText.setText(currentUser.getName());
 
                             String bio = currentUser.getAboutMe();
@@ -128,7 +126,11 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void updateUser() {
-        db.collection("users").document(userId).set(mUser);
+        if (mUser != null) {
+            db.collection("users").document(userId).set(mUser);
+            Toast.makeText(this, "Profile Updated.", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
 
