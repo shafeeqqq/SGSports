@@ -13,6 +13,19 @@
         <item>Table Tennis</item>
     </string-array>
 
+    <string-array name="sports_icon_urls">
+        <item>https://us.123rf.com/450wm/captainvector/captainvector1603/captainvector160303963/81537398-stock-vector-shuttlecock.jpg?ver=6</item>
+        <item>https://a.espncdn.com/combiner/i?img=/redesign/assets/img/icons/ESPN-icon-basketball.png&amp;w=288&amp;h=288&amp;transparent=true</item>
+        <item>https://a.espncdn.com/combiner/i?img=/redesign/assets/img/icons/ESPN-icon-cycling.png&amp;w=288&amp;h=288&amp;transparent=true</item>
+        <item>https://a.espncdn.com/combiner/i?img=/redesign/assets/img/icons/ESPN-icon-soccer.png&amp;w=288&amp;h=288&amp;transparent=true</item>
+        <item>https://a.espncdn.com/combiner/i?img=/redesign/assets/img/icons/ESPN-icon-golf.png&amp;w=288&amp;h=288&amp;transparent=true</item>
+        <item>https://cdn.mindful.org/2016/03/running.jpg?q=80&amp;fm=jpg&amp;fit=crop&amp;w=1400&amp;h=875</item>
+        <item>https://www.sportandfitness.bham.ac.uk/wp-content/uploads/2016/07/Squash.jpg</item>
+        <item>https://a.espncdn.com/combiner/i?img=/redesign/assets/img/icons/ESPN-icon-swimming.png&amp;w=288&amp;h=288&amp;transparent=true</item>
+        <item>https://a.espncdn.com/combiner/i?img=/redesign/assets/img/icons/ESPN-icon-tennis.png&amp;w=288&amp;h=288&amp;transparent=true</item>
+        <item>https://cdn2.iconfinder.com/data/icons/sport-8/70/ping_pong-512.png</item>
+    </string-array>
+
     <string-array name="skill_level">
         <item>Beginner</item>
         <item>Intermediate</item>

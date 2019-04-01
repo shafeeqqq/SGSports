@@ -1,10 +1,9 @@
 package com.example.shaf.sgsports.Model;
 
-import com.google.firebase.database.Exclude;
-
+import java.io.Serializable;
 import java.util.Date;
 
-public class Request {
+public class Request implements Serializable {
 
     public static final String ACCEPTED = "accepted";
     public static final String PENDING = "pending";
@@ -16,20 +15,9 @@ public class Request {
     private Date timeStamp;
     private String status = PENDING;       // accepted pending or reject
 
-    public String getUserName() {
-        return requesterName;
-    }
 
     public Request() {
 
-    }
-
-    public Request(String id, String userID, String requesterName, Date timeStamp, String status) {
-        this.id = id;
-        this.userID = userID;
-        this.requesterName = requesterName;
-        this.timeStamp = timeStamp;
-        this.status = status;
     }
 
     public String getId() {
@@ -40,6 +28,10 @@ public class Request {
         return userID;
     }
 
+    public String getRequesterName() {
+        return requesterName;
+    }
+
     public Date getTimeStamp() {
         return timeStamp;
     }
@@ -48,8 +40,26 @@ public class Request {
         return status;
     }
 
-    @Exclude
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Request(String id, String userID, String requesterName, Date timeStamp, String status) {
+        this.id = id;
+        this.userID = userID;
+        this.requesterName = requesterName;
+        this.timeStamp = timeStamp;
+        this.status = status;
+    }
+
+
+    @com.google.firebase.firestore.Exclude
     public boolean isAccepted() {
         return status.equals(ACCEPTED);
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public boolean isPending() {
+        return status.equals(PENDING);
     }
 }

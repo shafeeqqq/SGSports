@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_marginTop="56dp"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -13,6 +14,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
+        android:elevation="4dp"
         android:background="@color/colorPrimary"
         android:orientation="vertical">
 
@@ -28,12 +30,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
+            android:textColor="#222"
             android:text="John Watson"
             android:textSize="20dp" />
 
 
 
-        <RatingBar
+        <!--RatingBar
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,14 +45,17 @@
             android:numStars="5"
             android:rating="3.5"
             android:layout_marginBottom="8dp"
-            android:stepSize="0.5" />
+            android:stepSize="0.5" /-->
 
         <Button
             android:id="@+id/edit_profile_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:alpha="0.8"
+            android:layout_height="40dp"
             android:layout_gravity="center"
-            android:text="Edit Profile" />
+            android:text="Edit profile" />
 
     </LinearLayout>
 
@@ -67,7 +73,7 @@
             style="@style/ProfileTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="About Me"

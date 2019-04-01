@@ -25,7 +25,7 @@
     </style>
 
     <style name="ProfileText">
-        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textColor">#333</item>
     </style>
 
     <style name="ToolBarStyle" parent="Theme.AppCompat">

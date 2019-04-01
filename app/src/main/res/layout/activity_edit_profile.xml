@@ -65,9 +65,8 @@
 
         <EditText
             android:id="@+id/edit_profile_about_me"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_marginTop="8dp"
@@ -85,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingBottom="8dp">
 
             <TextView
@@ -99,11 +98,11 @@
 
             <TextView
                 android:id="@+id/edit_profile_gender_text"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:text="male"
                 android:textColor="#222"
                 android:textSize="16sp" />
 

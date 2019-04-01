@@ -24,12 +24,11 @@ import com.example.shaf.sgsports.Model.Event;
 import com.example.shaf.sgsports.Utils.BottomNavigationViewHelper;
 import com.example.shaf.sgsports.Utils.RecyclerItemCustomListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -38,7 +37,7 @@ import static com.example.shaf.sgsports.CreateEventDetailsFragment.UNKNOWN;
 import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
 
 public class HomeActivity extends AppCompatActivity implements
-        EventSearchFragment.OnFragmentInteractionListener, ConnectFragment.OnFragmentInteractionListener,
+        EventSearchFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener,
         FacilitiesFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "HomeActivity";
@@ -49,14 +48,11 @@ public class HomeActivity extends AppCompatActivity implements
     private EventListAdapter eventListAdapter;
     private static ArrayList<Event> eventArrayList = new ArrayList<Event>();
 
-
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     MenuItem searchItem;
     MenuItem filterItem;
-    ArrayList<Integer> selectedItems;
+    ArrayList<Integer> selectedItems = new ArrayList<>();
 
     public static final String LOGIN_PREFS = "LoginInfo";
     public static final String LOGGED_IN_FLAG = "isLoggedIn";
@@ -69,12 +65,14 @@ public class HomeActivity extends AppCompatActivity implements
     private final int LOGIN_INTENT_CODE = 904;
 
     final Fragment eventFragment = new EventSearchFragment();
-    final Fragment connectFragment = new ConnectFragment();
+    final Fragment connectFragment = new ProfileFragment();
     final Fragment scheduleFragment = new ScheduleFragment();
     final Fragment facilitiesFragment = new FacilitiesFragment();
 
     final FragmentManager fm = getSupportFragmentManager();
     Fragment active_fragment = eventFragment;
+
+    private FirebaseFirestore db;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -89,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements
                             .show(eventFragment)
                             .commit();
                     active_fragment = eventFragment;
+                    getSupportActionBar().setTitle(R.string.app_name);
 
                     if (searchItem != null)
                         searchItem.setVisible(true);
@@ -101,6 +100,7 @@ public class HomeActivity extends AppCompatActivity implements
                 case R.id.navigation_facilities:
                     fm.beginTransaction().hide(active_fragment).show(facilitiesFragment).commit();
                     active_fragment = facilitiesFragment;
+                    getSupportActionBar().setTitle(R.string.app_name);
 
                     if (searchItem != null)
                         searchItem.setVisible(false);
@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity implements
                 case R.id.navigation_create_event:
                     Intent intent = new Intent(HomeActivity.this, CreateEventActivity.class);
                     startActivityForResult(intent, CREATE_EVENT_CODE);
-
+                    getSupportActionBar().setTitle(R.string.app_name);
                     if (searchItem != null)
                         searchItem.setVisible(false);
 
@@ -123,7 +123,7 @@ public class HomeActivity extends AppCompatActivity implements
                 case R.id.navigation_schedule:
                     fm.beginTransaction().hide(active_fragment).show(scheduleFragment).commit();
                     active_fragment = scheduleFragment;
-
+                    getSupportActionBar().setTitle(R.string.app_name);
                     if (searchItem != null)
                         searchItem.setVisible(false);
 
@@ -131,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements
                         filterItem.setVisible(false);
                     return true;
 
-                case R.id.navigation_connect:
+                case R.id.navigation_profile:
                     fm.beginTransaction().hide(active_fragment).show(connectFragment).commit();
                     active_fragment = connectFragment;
 
@@ -140,6 +140,7 @@ public class HomeActivity extends AppCompatActivity implements
                     if (filterItem != null)
                         filterItem.setVisible(false);
 
+                    getSupportActionBar().setTitle("");
                     return true;
             }
             return false;
@@ -152,30 +153,15 @@ public class HomeActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        eventListAdapter = new EventListAdapter(this,0);
+
         Toolbar toolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setElevation(0);
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        selectedItems = new ArrayList<>();
-
+        db = FirebaseFirestore.getInstance();
         sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
         isLoggedIn = sharedPref.getBoolean(LOGGED_IN_FLAG, false);
-
-        String log_msg = "ONCREATE: isLoggedIn = " + String.valueOf(isLoggedIn);
-        Log.i(TAG, log_msg);
-
-//
-//        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                if (firebaseAuth.getCurrentUser() == null) {
-//                    // Not signed in, launch the Sign In activity
-//                    startActivityForResult(new Intent(HomeActivity.this, LoginActivity.class), LOGIN_INTENT_CODE);
-//                }
-//            }
-//        };
-
-//        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
 
         mBottomNavigationView = findViewById(R.id.navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -186,6 +172,11 @@ public class HomeActivity extends AppCompatActivity implements
         fm.beginTransaction().add(R.id.home_container, scheduleFragment).hide(scheduleFragment).commit();
         fm.beginTransaction().add(R.id.home_container, facilitiesFragment).hide(facilitiesFragment).commit();
 
+//        ArrayList<Facility> data = FacilitiesData.run(getResources().openRawResource(R.raw.result));
+//
+//        for (Facility f: data) {
+//            db.collection("facility").document(f.getFacilityID()).set(f);
+//        }
     }
 
 
@@ -195,6 +186,7 @@ public class HomeActivity extends AppCompatActivity implements
 
         if (requestCode == CREATE_EVENT_CODE) {
             mBottomNavigationView.setSelectedItemId(R.id.navigation_schedule);
+
         } else if (requestCode == LOGIN_INTENT_CODE) {
             isLoggedIn = sharedPref.getBoolean(LOGGED_IN_FLAG, false);
 
@@ -237,15 +229,18 @@ public class HomeActivity extends AppCompatActivity implements
         searchItem = menu.findItem(R.id.search_badge);
         final SearchView searchView = (SearchView) searchItem.getActionView();
 
+        filterEvents();
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-//                updateList
+                searchFilter(s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                searchFilter(s.toLowerCase());
                 return false;
             }
         });
@@ -270,23 +265,45 @@ public class HomeActivity extends AppCompatActivity implements
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void searchFilter(String s) {
+        Log.e(TAG, "search filter enter" + s);
+        ArrayList<Event> arr = new ArrayList<>();
+
+        if (s.isEmpty())
+            eventListAdapter.setEvents(eventArrayList);
+
+        Log.e(TAG, eventArrayList.size() + "<- main array");
+
+        for (Event event: eventArrayList) {
+            Log.e(TAG, event.getName() + s);
+            if (event.getName().toLowerCase().contains(s))
+                arr.add(event);
+        }
+
+        eventListAdapter.setEvents(arr);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.profile) {
-            Intent intent = new Intent(this, ProfileActivity.class);
-            startActivity(intent);
-            return true;
 
-        } else if (id == R.id.my_requests) {
+        if (id == R.id.my_requests) {
             Intent intent = new Intent(this, MyRequestsActivity.class);
             startActivity(intent);
             return true;
 
         } else if (id == R.id.filter) {
             openCategoryDialog();
+
+        } else if (id == R.id.log_out) {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(LOGGED_IN_FLAG, false);
+            editor.apply();
+
+            FirebaseAuth.getInstance().signOut();
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -318,7 +335,6 @@ public class HomeActivity extends AppCompatActivity implements
                         }
                     }
                 });
-
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (!check)
@@ -341,42 +357,29 @@ public class HomeActivity extends AppCompatActivity implements
     }
 
     private void filterEvents() {
-        eventListAdapter = new EventListAdapter(this);
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("events");
-
         sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
         final String userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
 
-        ref.addValueEventListener(new ValueEventListener() {
+        db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String[] categories = getResources().getStringArray(R.array.sports_categories);
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.e(TAG, "Listen failed.", e);
+                    return;
+                }
+                if (snapshots.isEmpty())
+                    Log.e(TAG, "No data");
+
                 eventArrayList.clear();
-
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Event event = ds.getValue(Event.class);
-                    if (!event.getOrganiser().equals(userId)) {
-                        if (!selectedItems.isEmpty()) {
-                            for (int i : selectedItems) {
-                                if (event.getSportsCategory().equals(categories[i]))
-                                    eventArrayList.add(event);
-                            }
-                        } else
-                            eventArrayList.add(event);
-
-                    }
+                for (QueryDocumentSnapshot doc : snapshots) {
+                    Event event = doc.toObject(Event.class);
+                    if (!event.getOrganiser().equals(userId))
+                        eventArrayList.add(event);
                 }
 
+                Log.e(TAG, eventArrayList.toString());
                 eventListAdapter.setEvents(eventArrayList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
             }
         });
 

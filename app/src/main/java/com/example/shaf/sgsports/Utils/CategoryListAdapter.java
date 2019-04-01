@@ -1,4 +1,4 @@
-package com.example.shaf.sgsports;
+package com.example.shaf.sgsports.Utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,17 +10,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.shaf.sgsports.R;
+
 public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapter.CategoryListViewHolder> {
 
-
     private Context mContext;
-
     private String[] mCategories;
+    private String[] mUrls;
+
 
 
     public CategoryListAdapter(Context context) {
         mContext = context;
         mCategories = context.getResources().getStringArray(R.array.sports_categories);
+        mUrls = context.getResources().getStringArray(R.array.sports_icon_urls);
+
     }
 
 
@@ -30,7 +35,6 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         View itemView = LayoutInflater.from(mContext)
                 .inflate(R.layout.list_item_category, parent, false);
 
-
         return new CategoryListViewHolder(itemView);
     }
 
@@ -39,6 +43,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         if (mCategories != null) {
             String current = mCategories[position];
             holder.textView.setText(current);
+            Glide.with(mContext).load(mUrls[position]).into(holder.imageView);
 
         } else {
             Toast.makeText(mContext, "Error displaying data", Toast.LENGTH_LONG).show();

@@ -6,10 +6,9 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_events">Events</string>
     <string name="title_facilities">Facilities</string>
-    <string name="title_connect">Connect</string>
+    <string name="title_profile">Profile</string>
     <string name="title_schedule">Schedule</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="signin_web_client_id">898905853738-0pckr27f6qh9ufjvsj62defg1egrin86.apps.googleusercontent.com</string>

@@ -95,16 +95,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.shaf.sgsports.HomeActivity" />
         </activity>
-
-
-        <activity android:name=".MyRequestsActivity"
+        <activity
+            android:name=".MyRequestsActivity"
             android:label="@string/title_schedule_details"
             android:parentActivityName=".HomeActivity">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.shaf.sgsports.HomeActivity" />
         </activity>
+        <activity
+            android:name=".ChooseFacilityActivity"
+            android:label="Choose Location"
+            android:parentActivityName=".HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.shaf.sgsports.CreateEventActivity" />
+        </activity>
+        <activity android:name=".EditEventActivity"></activity>
     </application>
 
 </manifest>

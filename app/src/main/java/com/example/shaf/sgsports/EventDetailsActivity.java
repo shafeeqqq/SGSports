@@ -1,44 +1,47 @@
 package com.example.shaf.sgsports;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.media.Image;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.EventLog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shaf.sgsports.Model.Event;
 import com.example.shaf.sgsports.Model.Request;
 import com.example.shaf.sgsports.Model.User;
+import com.example.shaf.sgsports.Utils.ManageRequestAdapter;
+import com.example.shaf.sgsports.Utils.RecyclerItemCustomListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static com.example.shaf.sgsports.CreateEventDetailsFragment.UNKNOWN;
 import static com.example.shaf.sgsports.HomeActivity.LOGIN_PREFS;
 import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
+import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_NAME;
 
 public class EventDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -47,10 +50,10 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     DatabaseReference ref = null;
     private ValueEventListener mEventDetailsListener;
+    RecyclerView recyclerView;
 
-    DatabaseReference requestRef;
-    DatabaseReference userReqRef;
-    FirebaseDatabase database;
+    String requesterName = "";
+    private Event localEvent;
 
     ArrayList<String> userRequestsarray = new ArrayList<>();
 
@@ -65,27 +68,29 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     private TextView addressTextView;
     private TextView maxPlayersTextView;
     private TextView descTextView;
-
+    private ProgressBar progressBar;
     private Button joinButton;
-
+    private LinearLayout container;
     private String eventID;
+    FirebaseFirestore db;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.mapview);
-//        mapFragment.getMapAsync(this);
+        db = FirebaseFirestore.getInstance();
+        container = findViewById(R.id.event_details_main_container);
+        container.setVisibility(View.GONE);
+        progressBar = findViewById(R.id.event_progress_bar);
+
+        SharedPreferences sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
+        userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
+        requesterName = sharedPref.getString(USER_ACCT_NAME, UNKNOWN);
 
         eventID = getIntent().getStringExtra(EVENT_ID);
         assert eventID != null;
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("events").child(eventID);
-
-        String path = "events/"+ eventID + "/requests";
-        requestRef = database.getReference(path);
 
         categoryTextView = findViewById(R.id.event_details_category_text);
         skillLvlTextView = findViewById(R.id.event_details_skill_text);
@@ -93,6 +98,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         dateTextView = findViewById(R.id.event_details_date);
         timeTextView = findViewById(R.id.event_details_time);
         addressTextView = findViewById(R.id.event_details_address);
+        LinearLayout addressContainer = findViewById(R.id.event_det_address_container);
         maxPlayersTextView = findViewById(R.id.event_details_max_players);
         descTextView = findViewById(R.id.event_details_description);
 
@@ -100,181 +106,203 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest();
+                processRequest(userId);
             }
         });
+
+        ImageView chatIcon = findViewById(R.id.event_details_chat_icon);
+        chatIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey there! I am ...");
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+            }
+        });
+
+        recyclerView = findViewById(R.id.event_details_recycler);
+        recyclerView.addOnItemTouchListener(new RecyclerItemCustomListener(this,
+                recyclerView, new RecyclerItemCustomListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (localEvent!=null)
+                    updateRequests(localEvent.queryPendingRequests());
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+            }
+        }));
 
         mapView = findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-    }
-
-    private void sendRequest() {
-        SharedPreferences sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
-        final String userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
-
-        requestExists(userId);
-    }
-
-    private void requestExists(final String userId) {
-        requestRef.addValueEventListener(new ValueEventListener() {
+        addressContainer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean exists = false;
-
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Request request = ds.getValue(Request.class);
-                    if (request.getUserID().equals(userId))
-                        exists = true;
-                }
-
-                if (exists)
-                    notifyUser();
-
-                else
-                    storeRequest(userId);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Toast.makeText(EventDetailsActivity.this, "Failed to load user.",
-                        Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                String location = String.valueOf(addressTextView.getText());
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q="+location);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
             }
         });
+
+    }
+
+
+    private void setOrganiserUI(ArrayList<Request> requests) {
+        Log.e(TAG, "filter requests: " + requests.toString());
+
+        mapView.setVisibility(View.GONE);
+        findViewById(R.id.event_details_host_info).setVisibility(View.GONE);
+        joinButton.setVisibility(View.GONE);
+
+        LinearLayout requestContainer = findViewById(R.id.event_details_requests);
+        requestContainer.setVisibility(View.VISIBLE);
+
+        Button editEventButton = findViewById(R.id.edit_event_button);
+        editEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EventDetailsActivity.this, EditEventActivity.class);
+                intent.putExtra(EVENT_ID, eventID);
+                startActivity(intent);
+            }
+        });
+
+        updateRequests(requests);
+    }
+
+    private void updateRequests(ArrayList<Request> requests) {
+        TextView emptyText = findViewById(R.id.event_details_empty_requests);
+        ManageRequestAdapter adapter = new ManageRequestAdapter(this, eventID);
+
+        if (!requests.isEmpty()) {
+            recyclerView.setAdapter(adapter);
+            adapter.setRequests(requests);
+
+        } else {
+            recyclerView.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    private void processRequest(final String userId) {
+        db.collection("userInEvents").document(userId).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> f = (ArrayList<String>) documentSnapshot.get("requested");
+                        Log.w(TAG, "--=" + f.toString());
+
+                        if (f.contains(eventID))
+                            notifyUser();
+                        else
+                            storeRequest(userId);
+                    }
+                });
     }
 
     private void notifyUser() {
         Toast.makeText(EventDetailsActivity.this, "Request Already Sent",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_LONG).show();
     }
 
     private void storeRequest(String userId) {
-        String id = requestRef.push().getKey();
-        String requesterName = getOrganiserName(userId);
+        String requestId = db.collection("events").getId();
 
-        Request request = new Request(id, userId, requesterName, new Date(), Request.PENDING);
-        requestRef.child(id).setValue(request);
-
-        userReqRef = database.getReference("userRequests/" + userId);
-
-        userReqRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("events"))
-                    loadIntoArray(dataSnapshot.child("events").getValue().toString());
-
-//                saveUserRequests();
+        if (requesterName.isEmpty()) {
+            try {
+                wait(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        Request request = new Request(requestId, userId, requesterName, new Date(), Request.PENDING);
+        DocumentReference ref = db.collection("events").document(eventID);
+        ref.update("requests", FieldValue.arrayUnion(request));
 
-            }
-        });
+        ref = db.collection("userInEvents").document(userId);
+        ref.update("requested", FieldValue.arrayUnion(eventID));
 
-    }
-
-    private void saveUserRequests() {
-        userRequestsarray.add(eventID);
-        userReqRef.child("events").setValue(userRequestsarray.toString());
         Toast.makeText(this, "Request Sent", Toast.LENGTH_SHORT).show();
+
+        joinButton.setAlpha(.5f);
+        joinButton.setClickable(false);
+        joinButton.setText("REQUEST " + "PENDING");
     }
 
-    private void loadIntoArray(String events) {
-        events = events.replace("[", "");
-        events = events.replace("]", "");
-
-        List<String> arr = Arrays.asList(events.split(","));
-        Log.e("EEE", arr.size() + "is the length");
-
-        for (String item: arr)
-            userRequestsarray.add(item.trim());
-
-        Log.e("EEE", userRequestsarray.size() + "is the length");
-
-
-
-    }
 
 
     @Override
     public void onStart() {
         super.onStart();
 
-        ValueEventListener eventDetailsListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Event currentEvent = dataSnapshot.getValue(Event.class);
-                if (currentEvent != null) {
-                    setTitle(currentEvent.getName());
-                    categoryTextView.setText(currentEvent.getSportsCategory());
-                    skillLvlTextView.setText(currentEvent.getSkillLevel());
-                    organiserNameTextView.setText(getOrganiserName(currentEvent.getOrganiser()));
-                    dateTextView.setText(currentEvent.dateCreatedText());
-                    timeTextView.setText(currentEvent.timeText());
+        db.collection("events").document(eventID).get()
+            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Event currentEvent = documentSnapshot.toObject(Event.class);
+                    if (currentEvent != null) {
+                        if (currentEvent.getOrganiser().equals(userId)) {
+                            setOrganiserUI(currentEvent.queryPendingRequests());
+                            Log.e(TAG, currentEvent.getRequests().toString());
+                        }
 
-                    String numText = currentEvent.getMaxParticipants() + " Players";
-                    maxPlayersTextView.setText(numText);
+                        getOrganiserName(currentEvent.getOrganiser());
+                        setTitle(currentEvent.getName());
+                        categoryTextView.setText(currentEvent.getSportsCategory());
+                        skillLvlTextView.setText(currentEvent.getSkillLevel());
+                        dateTextView.setText(currentEvent.dateCreatedText());
+                        timeTextView.setText(currentEvent.timeText());
 
-                    String descText = currentEvent.getDescription();
-                    if (descText.equals(""))
-                        descTextView.setText(getString(R.string.no_description_given));
-                    else
-                        descTextView.setText(currentEvent.getDescription());
+                        String numText = currentEvent.getMaxParticipants() + " Players";
+                        maxPlayersTextView.setText(numText);
+
+                        String descText = currentEvent.getDescription();
+                        if (descText.equals(""))
+                            descTextView.setText(getString(R.string.no_description_given));
+                        else
+                            descTextView.setText(currentEvent.getDescription());
+
+                        String status = currentEvent.hasRequestFrom(userId);
+                        if (!status.equals("NO")) {
+                            joinButton.setAlpha(.5f);
+                            joinButton.setClickable(false);
+                            joinButton.setText("REQUEST " + status);
+                        }
+                    }
+
+
                 }
-            }
+            });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-
-                Toast.makeText(EventDetailsActivity.this, "Failed to load event.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        ref.addValueEventListener(eventDetailsListener);
-        // Keep copy of post listener so we can remove it when app stops
-        mEventDetailsListener = eventDetailsListener;
     }
 
-    private String getOrganiserName(String userId) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(userId);
-        final List<String> param = new ArrayList<>();
+    private void getOrganiserName(String userId) {
 
-        ref.addValueEventListener(new ValueEventListener() {
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                User user = dataSnapshot.getValue(User.class);
-                if (user == null)
-                    Log.e(TAG, "Failed to load user");
-                else {
-                    Log.e(TAG, user.getName());
-                    setOrganiseName(user.getName());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Toast.makeText(EventDetailsActivity.this, "Failed to load user.",
-                        Toast.LENGTH_SHORT).show();
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User user = documentSnapshot.toObject(User.class);
+                assert user != null;
+                setOrganiserName(user.getName());
             }
         });
 
-        Log.e(TAG, param.toString());
-        if (param.isEmpty())
-            return "";
-        else
-            return param.get(0);
     }
 
-    private void setOrganiseName(String name) {
+    private void setOrganiserName(String name) {
         organiserNameTextView.setText(name);
+        progressBar.setVisibility(View.GONE);
+        container.setVisibility(View.VISIBLE);
     }
 
 
@@ -300,7 +328,15 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return(super.onOptionsItemSelected(item));
+    }
 
 
 }

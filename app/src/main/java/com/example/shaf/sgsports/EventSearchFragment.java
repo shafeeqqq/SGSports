@@ -5,19 +5,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.shaf.sgsports.Model.Event;
 import com.example.shaf.sgsports.Utils.RecyclerItemCustomListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -26,20 +28,11 @@ import static com.example.shaf.sgsports.HomeActivity.LOGIN_PREFS;
 import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link EventSearchFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class EventSearchFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
+    private static final String TAG = "EVENT_FRAGMENT";
     private static ArrayList<Event> eventArrayList = new ArrayList<Event>();
-
+    FirebaseFirestore db;
     SharedPreferences sharedPref;
 
     public static final String EVENT_ID = "eventID";
@@ -63,33 +56,35 @@ public class EventSearchFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_event, container, false);
 
-        eventListAdapter = new EventListAdapter(view.getContext());
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("events");
-
         sharedPref = getActivity().getSharedPreferences(LOGIN_PREFS, getActivity().MODE_PRIVATE);
         final String userId = sharedPref.getString(USER_ACCT_ID, UNKNOWN);
 
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                eventArrayList.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Event event = ds.getValue(Event.class);
-                    if (!event.getOrganiser().equals(userId))
-                        eventArrayList.add(event);
-                }
-                eventListAdapter.setEvents(eventArrayList);
-            }
+        db = FirebaseFirestore.getInstance();
+        eventListAdapter = new EventListAdapter(view.getContext(),0);
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-            }
-        });
+        db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.e(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        if (snapshots.isEmpty())
+                            Log.e(TAG, "No data");
+                        eventArrayList.clear();
+                        for (QueryDocumentSnapshot doc : snapshots) {
+
+                            Event event = doc.toObject(Event.class);
+                            Log.e(TAG, event.getOrganiser() + "< organiser");
+                            Log.e(TAG, userId+ "< acct ID");
+                            if (!event.getOrganiser().equals(userId))
+                                eventArrayList.add(event);
+                        }
+                        Log.e(TAG, eventArrayList.toString());
+                        eventListAdapter.setEvents(eventArrayList);
+                    }
+                });
 
         recyclerView = view.findViewById(R.id.eventsearch_recycler_view);
         recyclerView.setAdapter(eventListAdapter);
@@ -110,13 +105,6 @@ public class EventSearchFragment extends Fragment {
 
         return view;
 
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.shaf.sgsports;
+package com.example.shaf.sgsports.Utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,10 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-
+import com.bumptech.glide.Glide;
 import com.example.shaf.sgsports.Model.Facility;
+import com.example.shaf.sgsports.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FacilityListAdapter extends RecyclerView.Adapter<FacilityListAdapter.FacilityListViewHolder> {
@@ -40,31 +43,42 @@ public class FacilityListAdapter extends RecyclerView.Adapter<FacilityListAdapte
         return new FacilityListAdapter.FacilityListViewHolder(itemView);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull FacilityListAdapter.FacilityListViewHolder holder, int position) {
-//        if (mFacilitys != null) {
-//            Facility current = mFacilitys.get(position);
-//
-//            // TODO: facility object binding
-//
-//        }
-//
-//        else {
-//            Toast.makeText(mContext, "Error displaying data", Toast.LENGTH_LONG).show();
-//        }
-        if (mCategories != null) {
-            String current = mCategories[position];
-            holder.nameTextView.setText(current);
+        if (mFacilities != null) {
+            Facility current = mFacilities.get(position);
+
+            holder.addressTextView.setText(current.getAddressText());
+            holder.nameTextView.setText(current.getName());
+            Glide.with(mContext).load(current.getImageUrl()).into(holder.imageView);
         }
+
+        else {
+            Toast.makeText(mContext, "Error displaying data", Toast.LENGTH_LONG).show();
+        }
+
     }
 
 
     @Override
     public int getItemCount() {
-        // TODO: change this to event later
-        if (mCategories != null)
-            return mCategories.length;
+        if (mFacilities != null)
+            return mFacilities.size();
         return 0;
+    }
+
+    public void setFacilities(ArrayList<Facility> facilities) {
+        mFacilities = facilities;
+        notifyDataSetChanged();
+    }
+
+    public String getFacilityID(int position) {
+        return mFacilities.get(position).getFacilityID();
+    }
+
+    public String getFacilityName(int position) {
+        return mFacilities.get(position).getName();
     }
 
     public class FacilityListViewHolder extends RecyclerView.ViewHolder {

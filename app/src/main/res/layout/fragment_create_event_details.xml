@@ -165,14 +165,14 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <Spinner
+            <TextView
                 android:id="@+id/create_event_details_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:textSize="14sp"
+                android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                android:entries="@array/skill_level"
-                android:gravity="center_horizontal"
-                android:text="Unknown" />
+                android:text="Choose location"/>
 
         </LinearLayout>
 

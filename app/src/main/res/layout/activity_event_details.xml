@@ -11,283 +11,369 @@
 
 
     <android.support.v7.widget.LinearLayoutCompat
-        xmlns:map="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/event_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="200dp"
+            android:indeterminate="true" />
+
         <LinearLayout
+            android:id="@+id/event_details_main_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:id="@+id/event_details_category_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#444"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_gravity="center_horizontal"
-                android:text="Badminton"/>
-
-            <TextView
-                android:id="@+id/event_details_skill_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#666"
-                android:textSize="14sp"
-                android:textStyle="italic"
-                android:layout_marginTop="4dp"
-                android:layout_gravity="center_horizontal"
-                android:text="Intermediate Level"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#eee"/>
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <ImageView
-                android:id="@+id/event_details_org_pic"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginLeft="16dp"
-                android:src="@drawable/navigation_circle"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/event_details_org_pic">
-                <TextView
-                    android:id="@+id/event_details_host_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#444"
-                    android:textSize="14sp"
-                    android:layout_gravity="left"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/event_details_org_pic"
-                    android:text="Host Player"/>
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
                 <TextView
-                    android:id="@+id/event_details_host_name"
+                    android:id="@+id/event_details_category_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Badminton"
                     android:textColor="#444"
-                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/event_details_skill_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
+                    android:text="Intermediate Level"
+                    android:textColor="#666"
                     android:textSize="14sp"
-                    android:layout_gravity="left"
-                    app:layout_constraintTop_toBottomOf="@id/event_details_host_title"
-                    app:layout_constraintLeft_toRightOf="@id/event_details_org_pic"
-                    android:text="John Watson"/>
+                    android:textStyle="italic"/>
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eee"/>
 
-
-            <ImageView
-                android:id="@+id/event_details_chat_icon"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@android:drawable/stat_notify_chat"
-                android:tint="@color/colorAccent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginRight="32dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#666"
-                android:textSize="12sp"
-                android:layout_marginRight="8dp"
-                android:layout_gravity="left"
-                android:textStyle="italic"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/event_details_chat_icon"
-                android:text="Chat with host"/>
-
-        </android.support.constraint.ConstraintLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"/>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:id="@+id/event_details_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="#444"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:text="Wed, 21 Feb 2019"/>
-
-            <TextView
-                android:id="@+id/event_details_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="#666"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:text="10:00 AM - 12:00 PM"/>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:id="@+id/event_details_address"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/event_details_host_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#666"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:text="10 Address Road, Singapore 123456"/>
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:id="@+id/event_details_org_pic"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginLeft="16dp"
+                    android:src="@drawable/navigation_circle"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/event_details_org_pic"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <TextView
+                        android:id="@+id/event_details_host_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="Host Player"
+                        android:textColor="#444"
+                        android:textSize="14sp"
+                        app:layout_constraintLeft_toRightOf="@id/event_details_org_pic"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/event_details_host_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="John Watson"
+                        android:textColor="#444"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toRightOf="@id/event_details_org_pic"
+                        app:layout_constraintTop_toBottomOf="@id/event_details_host_title"/>
+
+                </LinearLayout>
+
+
+
+                <ImageView
+                    android:id="@+id/event_details_chat_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="32dp"
+                    android:src="@android:drawable/stat_notify_chat"
+                    android:tint="@color/colorAccent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginRight="8dp"
+                    android:text="Chat with host"
+                    android:textColor="#666"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/event_details_chat_icon"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/event_details_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Wed, 21 Feb 2019"
+                    android:textColor="#444"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/event_details_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="10:00 AM - 12:00 PM"
+                    android:textColor="#666"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+
+            <LinearLayout
+                android:id="@+id/event_det_address_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_loc_marker"
+                    android:tint="@color/colorAccent" />
+
+                <TextView
+                    android:id="@+id/event_details_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="10 Address Road, Singapore 123456"
+                    android:textColor="#333"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapview"
+                android:layout_width="match_parent"
+                android:layout_height="150dp">
+
+            </com.google.android.gms.maps.MapView>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="Max Players"
+                    android:textColor="#444"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/event_details_max_players"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="9 players"
+                    android:textColor="#666"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="Description"
+                    android:textColor="#444"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/event_details_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="Sample text description of event"
+                    android:textColor="#666"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/event_details_whos_go"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="Who is going?"
+                    android:textColor="#444"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                </ListView>
+
+                <ImageView
+                    android:id="@+id/event_details_profile"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    android:src="@drawable/navigation_circle" />
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/join_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:backgroundTint="@color/colorAccent"
+                android:text="join"
+                android:textColor="@android:color/white"/>
+
+            <LinearLayout
+                android:id="@+id/event_details_requests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="Requests"
+                    android:textColor="#444"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/event_details_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
+
+                <TextView
+                    android:id="@+id/event_details_empty_requests"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="No Pending requests..."
+                    android:textColor="#666"
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/edit_event_button"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:textColor="@android:color/white"
+                android:text="edit event"
+                android:backgroundTint="@color/colorAccent"
+                android:layout_gravity="center"/>
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"/>
-
-
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapview"
-            android:layout_width="match_parent"
-            android:layout_height="160dp">
-
-        </com.google.android.gms.maps.MapView>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#444"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:layout_marginLeft="16dp"
-                android:text="Max Players"/>
-
-            <TextView
-                android:id="@+id/event_details_max_players"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#666"
-                android:layout_marginTop="4dp"
-                android:textSize="14sp"
-                android:layout_marginLeft="16dp"
-                android:text="9 players"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#444"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:layout_marginLeft="16dp"
-                android:text="Description"/>
-
-            <TextView
-                android:id="@+id/event_details_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#666"
-                android:layout_marginTop="4dp"
-                android:textSize="14sp"
-                android:layout_marginLeft="16dp"
-                android:text="Sample text description of event"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#444"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:layout_marginLeft="16dp"
-                android:text="Who is going?"/>
-
-            <ImageView
-                android:id="@+id/event_details_profile"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginLeft="16dp"
-                android:src="@drawable/navigation_circle" />
-
-
-        </LinearLayout>
-
-
-        <Button
-            android:id="@+id/join_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="32dp"
-            android:text="join"
-            android:backgroundTint="@color/colorAccent"
-            android:layout_gravity="center"/>
 
     </android.support.v7.widget.LinearLayoutCompat>
 

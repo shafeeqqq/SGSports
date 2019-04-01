@@ -3,27 +3,27 @@
 
     <item
         android:id="@+id/navigation_events"
-        android:icon="@drawable/navigation_circle"
+        android:icon="@drawable/ic_events"
         android:title="@string/title_events" />
 
     <item
         android:id="@+id/navigation_facilities"
-        android:icon="@drawable/navigation_circle"
+        android:icon="@drawable/ic_facilities"
         android:title="@string/title_facilities" />
 
     <item
         android:id="@+id/navigation_create_event"
         android:title="Create"
-        android:icon="@drawable/navigation_circle" />
+        android:icon="@drawable/ic_create_event" />
 
     <item
         android:id="@+id/navigation_schedule"
-        android:icon="@drawable/navigation_circle"
+        android:icon="@drawable/ic_schedule"
         android:title="@string/title_schedule" />
 
     <item
-        android:id="@+id/navigation_connect"
-        android:icon="@drawable/navigation_circle"
-        android:title="@string/title_connect" />
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_person"
+        android:title="@string/title_profile" />
 
 </menu>

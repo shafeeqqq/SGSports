@@ -23,10 +23,13 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.shaf.sgsports.HomeActivity.LOGGED_IN_FLAG;
 import static com.example.shaf.sgsports.HomeActivity.LOGIN_PREFS;
@@ -36,10 +39,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static final String TAG = "LoginActivity" ;
 
     public static final String USER_ACCT_ID = "emailAddress" ;
+    public static final String USER_ACCT_NAME = "user-name" ;
+
     SharedPreferences sharedPref;
+    FirebaseFirestore db;
 
-
-    private SignInButton mSignInButton;
     private GoogleApiClient googleApiClient;
     private FirebaseAuth mAuth;
 
@@ -52,23 +56,21 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         setContentView(R.layout.activity_login);
 
         sharedPref = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
-
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
+        SignInButton mSignInButton = findViewById(R.id.sign_in_button);
+        mSignInButton.setOnClickListener(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.signin_web_client_id))
                 .requestEmail()
                 .build();
 
-
         googleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        mSignInButton = findViewById(R.id.sign_in_button);
-        mSignInButton.setOnClickListener(this);
     }
 
     @Override
@@ -88,55 +90,77 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-//
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-
             handleSignInResult(result);
             finish();
-
         }
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
-            GoogleSignInAccount account = result.getSignInAccount();
 
-            String name = account.getDisplayName();
+            final GoogleSignInAccount account = result.getSignInAccount();
+            assert account != null;
+
+            final String name = account.getGivenName();
             String accountId = account.getId();
-
-            Toast.makeText(this, "Welcome " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
-
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean(LOGGED_IN_FLAG, true);
-            editor.putString(USER_ACCT_ID, accountId);
-            editor.apply();
-
-            saveUser(name, accountId);
+            String imgUrl = String.valueOf(account.getPhotoUrl());
 
             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
+                        Toast.makeText(LoginActivity.this, "Welcome " + name, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(LOGGED_IN_FLAG, true);
+            editor.putString(USER_ACCT_ID, accountId);
+            editor.putString(USER_ACCT_NAME, name);
+            editor.apply();
+
+            processUser(name, accountId, imgUrl);
+
         }
     }
 
-    private void saveUser(String name, String accountId) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("users");
+    private void processUser(String name, String accountId, String imgUrl) {
+        final User user = new User(accountId, name, new Date());
 
-        Date now = new Date();
+        db.collection("users").whereEqualTo("userID", accountId).get().
+                addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().isEmpty()) {
+                        initialiseUser(user);
+                        Log.e(TAG, "New User");
+                    }
+                    Log.e(TAG, "Old User");
+                }
+            }
+        });
 
-        User user = new User(accountId, name, now);
-        myRef.child(accountId).setValue(user);
+    }
 
+    private void initialiseUser(User user) {
+        db.collection("users").document(user.getUserID()).set(user);
+
+        Map<String, Object> data = new HashMap<>();
+        ArrayList<String> emptyList = new ArrayList<>();
+
+        data.put("created", emptyList);
+        data.put("joined", emptyList);
+        data.put("requested", emptyList);
+        data.put("rejected", emptyList);
+
+
+        db.collection("userInEvents").document(user.getUserID()).set(data);
     }
 
     @Override

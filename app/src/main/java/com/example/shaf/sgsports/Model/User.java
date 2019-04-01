@@ -77,5 +77,28 @@ public class User {
         return gender;
     }
 
+    @com.google.firebase.firestore.Exclude
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    @com.google.firebase.firestore.Exclude
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public void setInterests(HashMap<String, String> interests) {
+        this.interests = interests;
+    }
+
+    @com.google.firebase.firestore.Exclude
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
 }
