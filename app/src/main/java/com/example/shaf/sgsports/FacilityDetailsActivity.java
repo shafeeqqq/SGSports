@@ -57,8 +57,10 @@ public class FacilityDetailsActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         button = findViewById(R.id.facility_details_button);
-        if (choose)
+        if (choose) {
+            button.setVisibility(View.VISIBLE);
             button.setText("SELECT");
+        }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

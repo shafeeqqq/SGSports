@@ -396,7 +396,7 @@ public class HomeActivity extends AppCompatActivity implements
                 eventArrayList.clear();
                 for (QueryDocumentSnapshot doc : snapshots) {
                     Event event = doc.toObject(Event.class);
-                    if (!event.getOrganiser().equals(userId))
+                    if (!event.getOrganiser().equals(userId) && !event.isPast())
                         eventArrayList.add(event);
                 }
 

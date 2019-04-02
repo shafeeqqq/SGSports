@@ -296,16 +296,18 @@
                     android:textSize="14sp"
                     android:textStyle="bold"/>
 
-                <ListView
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/event_detail_participants"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-                </ListView>
+                    android:layout_height="match_parent"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
 
                 <ImageView
                     android:id="@+id/event_details_profile"
                     android:layout_width="36dp"
+                    android:visibility="gone"
                     android:layout_height="36dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="4dp"

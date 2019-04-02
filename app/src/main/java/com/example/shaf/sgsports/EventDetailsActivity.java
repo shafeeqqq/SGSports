@@ -20,6 +20,8 @@ import com.example.shaf.sgsports.Model.Event;
 import com.example.shaf.sgsports.Model.Request;
 import com.example.shaf.sgsports.Model.User;
 import com.example.shaf.sgsports.Utils.ManageRequestAdapter;
+import com.example.shaf.sgsports.Utils.ParticipantListAdapter;
+import com.example.shaf.sgsports.Utils.RecyclerItemCustomListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -285,6 +287,24 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                             joinButton.setClickable(false);
                             joinButton.setText("REQUEST " + status);
                         }
+
+                        final ParticipantListAdapter adapter = new ParticipantListAdapter(EventDetailsActivity.this);
+                        adapter.setParticipants(currentEvent.getRequests());
+                        RecyclerView partcipantsList = findViewById(R.id.event_detail_participants);
+                        partcipantsList.addOnItemTouchListener(new RecyclerItemCustomListener(EventDetailsActivity.this,
+                                partcipantsList, new RecyclerItemCustomListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                Intent intent = new Intent(EventDetailsActivity.this, ProfileActivity.class);
+                                intent.putExtra(USER_ACCT_ID, adapter.getItem(position));
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onLongItemClick(View view, int position) {
+                            }
+                        }));
+                        partcipantsList.setAdapter(adapter);
                     }
 
 

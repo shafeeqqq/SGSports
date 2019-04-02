@@ -1,8 +1,8 @@
 package com.example.shaf.sgsports;
 
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +36,13 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         getSupportActionBar().setElevation(0);
 
-        ConstraintLayout con = findViewById(R.id.profile_view_container);
+        LinearLayoutCompat con = findViewById(R.id.profile_view_container);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) con.getLayoutParams();
         params.topMargin = 0;
 //        con.setLayoutParams(params);
         db = FirebaseFirestore.getInstance();
+
+        userId = getIntent().getStringExtra(USER_ACCT_ID);
 
         Button editProfileButton = findViewById(R.id.edit_profile_button);
         editProfileButton.setVisibility(View.GONE);

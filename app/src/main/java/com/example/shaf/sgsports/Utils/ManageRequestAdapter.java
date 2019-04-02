@@ -87,7 +87,6 @@ public class ManageRequestAdapter extends RecyclerView.Adapter<ManageRequestAdap
                         updateRequestStatus(current.getId(), current.getUserID(), ACCEPT, pos);
                         holder.acceptButton.setAlpha(.5f);
                         holder.acceptButton.setClickable(false);
-//                        Toast.makeText(mContext, "Processing...", Toast.LENGTH_LONG).show();
                     }
                     else
                         Toast.makeText(mContext, "Event is Full!", Toast.LENGTH_SHORT).show();

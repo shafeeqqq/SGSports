@@ -74,7 +74,7 @@ public class EventSearchFragment extends Fragment {
                         for (QueryDocumentSnapshot doc : snapshots) {
 
                             Event event = doc.toObject(Event.class);
-                            if (!event.getOrganiser().equals(userId))
+                            if (!event.getOrganiser().equals(userId) && !event.isPast())
                                 eventArrayList.add(event);
                         }
                         Log.e(TAG, eventArrayList.toString());
