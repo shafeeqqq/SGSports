@@ -45,12 +45,9 @@
             android:id="@+id/edit_profile_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:paddingLeft="16dp"
-            android:layout_marginTop="8dp"
             android:paddingRight="16dp"
             android:paddingBottom="8dp"
-            android:text="John Watson"
             android:textSize="16sp" />
 
 
@@ -70,14 +67,8 @@
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:layout_marginTop="8dp"
             android:paddingBottom="8dp"
             android:textSize="16sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#eee" />
 
 
         <!-- Gender -->
@@ -104,7 +95,7 @@
                 android:paddingLeft="16dp"
                 android:layout_marginTop="4dp"
                 android:paddingRight="16dp"
-                android:text="male"
+                tools:text="Male"
                 android:textColor="#222"
                 android:textSize="16sp" />
 

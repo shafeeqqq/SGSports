@@ -129,6 +129,13 @@ public class ScheduleDetailActivity extends AppCompatActivity {
                             eventArrayList.add(event);
                     }
                 }
+
+                if (eventArrayList.isEmpty())
+                    showEmptyMessage(true);
+
+                else {
+                    showEmptyMessage(false);
+                }
                 Log.e(TAG, "num requested events: " + eventArrayList.size());
                 eventListAdapter.setEvents(eventArrayList);
             }
