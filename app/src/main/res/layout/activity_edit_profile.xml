@@ -16,7 +16,8 @@
         android:paddingBottom="24dp"
         app:layout_collapseMode="pin">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/edit_profile_icon"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_gravity="center"

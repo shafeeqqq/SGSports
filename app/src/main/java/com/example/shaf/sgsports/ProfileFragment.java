@@ -15,9 +15,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.shaf.sgsports.Model.User;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+
+import javax.annotation.Nullable;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -107,22 +110,23 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        db.collection("users").document(userId).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        User currentUser = documentSnapshot.toObject(User.class);
-                        if (currentUser != null) {
-                            nameTextView.setText(currentUser.getName());
-                            String aboutMe = currentUser.getAboutMe();
-                            if (aboutMe != null && !aboutMe.isEmpty())
-                                aboutMeTextView.setText(aboutMe);
-                            if (currentUser.getImageURL() != null)
-                                Glide.with(getContext()).load(currentUser.getImageURL()).into(profileIcon);
-                        }
-                    }
-                });
+        db.collection("users").document(userId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (documentSnapshot != null) {
 
+                    User currentUser = documentSnapshot.toObject(User.class);
+                    if (currentUser != null) {
+                        nameTextView.setText(currentUser.getName());
+                        String aboutMe = currentUser.getAboutMe();
+                        if (aboutMe != null && !aboutMe.isEmpty())
+                            aboutMeTextView.setText(aboutMe);
+                        if (currentUser.getImageURL() != null)
+                            Glide.with(getContext()).load(currentUser.getImageURL()).into(profileIcon);
+                    }
+                }
+            }
+        });
         return view;
 
     }

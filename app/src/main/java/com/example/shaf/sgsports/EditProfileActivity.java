@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.shaf.sgsports.Model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.shaf.sgsports.LoginActivity.USER_ACCT_ID;
 
@@ -35,6 +39,8 @@ public class EditProfileActivity extends AppCompatActivity {
     EditText nameEditText;
     EditText aboutMeEditText;
     TextView genderText;
+
+    public static final String TAG = EditProfileActivity.class.getSimpleName();
 
 
 
@@ -58,6 +64,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 showGenderDialog();
             }
         });
+
 
     }
 
@@ -91,12 +98,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
     private void getUser(String userId) {
+        Log.e(TAG, "user id:" + userId);
+
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         User currentUser = documentSnapshot.toObject(User.class);
-
                         if (currentUser != null) {
                             mUser = currentUser;
                             nameEditText.setText(currentUser.getName());
@@ -113,7 +121,9 @@ public class EditProfileActivity extends AppCompatActivity {
                             else
                                 genderText.setText(gender);
 
-//                            Glide.with(FacilityDetailsActivity.this).load(facility.getImageUrl()).centerCrop().into(imageView);
+                            CircleImageView profileIcon = findViewById(R.id.edit_profile_icon);
+                            Glide.with(EditProfileActivity.this).load(currentUser.getImageURL()).into(profileIcon);
+
 
 //                            container.setVisibility(View.VISIBLE);
 //                            progressBar.setVisibility(View.GONE);
@@ -127,9 +137,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void updateUser() {
         if (mUser != null) {
+            mUser.setGender(genderText.getText().toString());
+            mUser.setAboutMe(aboutMeEditText.getText().toString());
             db.collection("users").document(userId).set(mUser);
             Toast.makeText(this, "Profile Updated.", Toast.LENGTH_SHORT).show();
-
+            finish();
         }
     }
 

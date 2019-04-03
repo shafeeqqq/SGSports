@@ -2,30 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <item
-        android:id="@+id/my_requests"
-        android:title="My Requests"
-        app:showAsAction="never" />
-
-    <!--item
-        android:id="@+id/search_badge"
+        android:id="@+id/event_search_badge"
         android:title="Search"
         android:icon="@drawable/ic_search"
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
-        android:id="@+id/filter"
+        android:id="@+id/event_filter"
         android:title="Filter"
         android:iconTint="#fff"
         android:icon="@drawable/ic_filter"
-        app:showAsAction="always" /-->
-
-    <item
-        android:id="@+id/log_out"
-        android:title="Log Out"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 
 </menu>
 
