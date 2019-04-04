@@ -138,6 +138,31 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        db.collection("users").document(userId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (documentSnapshot != null) {
+
+                    User currentUser = documentSnapshot.toObject(User.class);
+                    if (currentUser != null) {
+                        nameTextView.setText(currentUser.getName());
+                        String aboutMe = currentUser.getAboutMe();
+                        if (aboutMe != null && !aboutMe.isEmpty())
+                            aboutMeTextView.setText(aboutMe);
+                        if (currentUser.getImageURL() != null)
+                            Glide.with(getContext()).load(currentUser.getImageURL()).into(profileIcon);
+                    }
+                }
+            }
+        });
+
+
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {

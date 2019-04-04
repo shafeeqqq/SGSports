@@ -85,7 +85,6 @@ public class EventSearchFragment extends Fragment {
                         if (e != null) {
                             return;
                         }
-
                         eventArrayList.clear();
                         for (QueryDocumentSnapshot doc : snapshots) {
 

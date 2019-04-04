@@ -132,8 +132,6 @@ public class HomeActivity extends AppCompatActivity implements
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fixBottomNavigation();
 
-        fm.beginTransaction().add(R.id.home_container, eventFragment).commit();
-        fm.beginTransaction().add(R.id.home_container, connectFragment).hide(connectFragment).commit();
         fm.beginTransaction().add(R.id.home_container, scheduleFragment).hide(scheduleFragment).commit();
         fm.beginTransaction().add(R.id.home_container, facilitiesFragment).hide(facilitiesFragment).commit();
 
@@ -154,6 +152,11 @@ public class HomeActivity extends AppCompatActivity implements
 
         } else if (requestCode == LOGIN_INTENT_CODE) {
             isLoggedIn = sharedPref.getBoolean(LOGGED_IN_FLAG, false);
+            if (isLoggedIn) {
+                fm.beginTransaction().add(R.id.home_container, connectFragment).hide(connectFragment).commit();
+                fm.beginTransaction().add(R.id.home_container, eventFragment).commit();
+            }
+
         }
     }
 
@@ -165,6 +168,13 @@ public class HomeActivity extends AppCompatActivity implements
         if (!isLoggedIn) {
             // Not signed in, launch the Sign In activity
             startActivityForResult(new Intent(this, LoginActivity.class), LOGIN_INTENT_CODE);
+
+        } else {
+            if (!fm.getFragments().contains(connectFragment))
+                fm.beginTransaction().add(R.id.home_container, connectFragment).hide(connectFragment).commit();
+
+            if (!fm.getFragments().contains(eventFragment))
+                fm.beginTransaction().add(R.id.home_container, eventFragment).commit();
         }
 
     }
